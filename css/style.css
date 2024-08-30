@@ -1,0 +1,280 @@
+/* Reset CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Body */
+body {
+    background-color: #f4f4f4;
+    color: #333;
+    font-size: 16px;
+    line-height: 1.6;
+    padding: 20px;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    text-align: center;
+}
+
+/* Header */
+header {
+    margin-bottom: 40px;
+}
+
+    header img {
+        max-width: 100px;
+        margin-bottom: 20px;
+    }
+
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #333;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    font-size: 28px;
+}
+
+/* Dashboard Grid */
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.dashboard-item {
+    background: #333;
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+    .dashboard-item:hover {
+        transform: translateY(-5px);
+        background: #444;
+    }
+
+    .dashboard-item img {
+        max-width: 50px;
+        margin-bottom: 10px;
+    }
+
+    .dashboard-item a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 18px;
+        display: block;
+        margin-top: 10px;
+    }
+
+        .dashboard-item a:hover {
+            text-decoration: underline;
+        }
+
+/* Navbar */
+nav ul {
+    list-style: none;
+    background: #333;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+}
+
+    nav ul li {
+        display: inline;
+        margin: 0 15px;
+    }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            transition: background 0.3s;
+        }
+
+            nav ul li a:hover {
+                background: #444;
+            }
+
+/* Form Styles */
+form {
+    margin-bottom: 20px;
+}
+
+    form input[type="text"],
+    form input[type="email"],
+    form input[type="password"],
+    form input[type="date"],
+    form input[type="number"],
+    form textarea,
+    form select {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+    }
+
+    form input[type="submit"] {
+        background: #333;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+
+        form input[type="submit"]:hover {
+            background: #444;
+        }
+
+.project-submit-btn {
+    background: #333; /
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+    .project-submit-btn:hover {
+        background: #218838;
+    }
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background: #333;
+    color: #fff;
+}
+
+tr:nth-child(even) {
+    background: #f4f4f4;
+}
+
+/* Button Styles */
+.btn, button {
+    background: #333;
+    color: #fff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 3px;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    transition: background 0.3s;
+    margin-top: 10px;
+}
+
+    .btn:hover, button:hover {
+        background: #444;
+    }
+
+/* Styles spécifiques pour les boutons Modifier et Supprimer */
+.btn-edit {
+    background-color: green !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 10px 20px !important;
+    border-radius: 5px !important;
+    cursor: pointer !important;
+    transition: background 0.3s !important;
+}
+
+
+
+    .btn:hover {
+        background: #444;
+    }
+
+.btn-delete {
+    background: #dc3545 !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 10px 20px !important;
+    border-radius: 5px !important;
+    cursor: pointer !important;
+    transition: background 0.3s !important;
+}
+
+    .btn-delete:hover {
+        background: #c82333 !important;
+    }
+
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 20px;
+    color: #777;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    nav ul {
+        display: block;
+    }
+
+        nav ul li {
+            display: block;
+            margin: 10px 0;
+        }
+
+    .container {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    h2 {
+        font-size: 22px;
+    }
+}
+li {
+    list-style-type: none;
+}
+.logout-btn-container {
+    position: absolute;
+    bottom: 20px; /* Par exemple, placer 20px au-dessus du bas de la page */
+    left: 50%;
+    transform: translateX(-50%);
+}
