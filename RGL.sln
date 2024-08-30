@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35208.52
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "PHPWebProject1", "PHPWebProject1.phpproj", "{F692F139-F113-4137-B0D8-F0636CD2D942}"
+Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "RGL", "RGL.phpproj", "{F692F139-F113-4137-B0D8-F0636CD2D942}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
