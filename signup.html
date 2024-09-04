@@ -15,12 +15,14 @@
         <form method="POST" action="traitement_inscription.php">
           <input type="text" name="name" placeholder="Nom complet" required><br>
             <input type="text" name="prenom" placeholder="Prenom" required><br>
-            <input type="email" name="email" placeholder="Adresse email" required><br>
+            <input type="date" name="birth" placeholder="Date de naissance" required><br>
+            <input type="number"  maxlength="10" name="tel" placeholder="Numero de téléphone" required><br>
+            <input type="text" name="adresse" placeholder="Adresse" required><br>
+            <input type="text" name="Ville" placeholder="Ville" required><br>
+            <input type="number" name="zip" maxlength="5" placeholder="Code postale" required><br>
+             <input type="email" name="email" placeholder="Adresse email" required><br>
             <input type="password" name="mdp" placeholder="Mot de passe" required><br>
-            <select name="role" required>
-                <option value="chef de projet">Chef de Projet</option>
-                <option value="employé">Employé</option>
-            </select><br>
+
             <input type="submit" value="Créer le compte">
         </form>
     </div>
