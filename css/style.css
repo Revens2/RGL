@@ -141,13 +141,12 @@ form {
         transition: background 0.3s;
     }
 
-
         form input[type="submit"]:hover {
             background: #444;
         }
 
 .project-submit-btn {
-    background: #333; /
+    background: #333;
     color: #fff;
     border: none;
     padding: 10px 20px;
@@ -159,6 +158,7 @@ form {
     .project-submit-btn:hover {
         background: #218838;
     }
+
 /* Table Styles */
 table {
     width: 100%;
@@ -214,11 +214,9 @@ tr:nth-child(even) {
     transition: background 0.3s !important;
 }
 
-
-
-    .btn:hover {
-        background: #444;
-    }
+.btn:hover {
+    background: #444;
+}
 
 .btn-delete {
     background: #dc3545 !important;
@@ -233,7 +231,6 @@ tr:nth-child(even) {
     .btn-delete:hover {
         background: #c82333 !important;
     }
-
 
 /* Footer */
 footer {
@@ -269,27 +266,18 @@ footer {
         font-size: 22px;
     }
 }
-li {
-    list-style-type: none;
-}
-.logout-btn-container {
-    position: absolute;
-    bottom: 20px; /* Par exemple, placer 20px au-dessus du bas de la page */
-    left: 50%;
-    transform: translateX(-50%);
-}
 
-/* Popup Modale pour l'ajout de Gymnases */
+/* Pop-up Modale */
 .modal {
-    display: none; /* Masqué par défaut */
+    display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 10; /* S'assurer que la modale est au-dessus de tout */
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.4); /* Couleur de fond avec opacité */
-    padding-top: 100px;
+    overflow-y: auto;
 }
 
 .modal-content {
@@ -324,61 +312,31 @@ li {
     gap: 10px;
 }
 
-    .modal-form label {
-        font-weight: bold;
-        margin-bottom: 5px;
-    }
-
-    .modal-form input[type="text"],
-    .modal-form input[type="number"],
-    .modal-form input[type="date"],
-    .modal-form textarea,
-    .modal-form select {
-        padding: 10px;
-        font-size: 16px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
+    .modal-form input,
+    .modal-form textarea {
         width: 100%;
-        box-sizing: border-box;
+        padding: 10px;
+        margin-top: 5px;
     }
 
-    .modal-form input[type="submit"] {
-        background: #333;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
+/* Carte */
+#map {
+    height: 600px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+}
 
-        .modal-form input[type="submit"]:hover {
-            background: #444;
-        }
-
-/* Boutons pour ouvrir et fermer la modale */
-.open-modal-btn {
-    background-color: #333;
-    color: #fff;
+/* Bouton pour ouvrir la modale */
+#btnOpenModal {
+    z-index: 5; /* Bouton visible sur la carte */
+    position: absolute;
+    top: 25px;
+    right: 90px;
     padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
+    background-color: #333;
+    color: white;
     border: none;
-    transition: background-color 0.3s;
-    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 5px;
 }
-
-    .open-modal-btn:hover {
-        background-color: #444;
-    }
-
-/* Ajustement des boutons Modifier et Supprimer pour uniformité */
-.btn-edit, .btn-delete {
-    width: 100px; /* Assurer que les deux boutons ont la même largeur */
-    text-align: center;
-}
-
-    .btn-edit:hover {
-        background-color: #218838 !important;
-    }
-

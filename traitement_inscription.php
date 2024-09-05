@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $zip = $_POST['zip'];
     $email = $_POST['email'];
     $mdp = $_POST['mdp'];
-    $hashed = password_hash($mdp, PASSWORD_DEFAULT);
+    $hashed = md5($mdp);
 
     $stmt = $conn->prepare("INSERT INTO `Utilisateur` (`Nom`, `Prenom`, `Date_de_naissance`, `Numero_de_telephone`, `Adresse`, `isClient`, `isAdmin`, `Email`, `Ville`, `Zip`, `Mot_de_Passe`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
