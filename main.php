@@ -4,7 +4,6 @@ include 'db_connect.php';
 include 'Class/cConnected.php';
 $connect = new cConnected($conn);
 
-// Récupérer la liste des gymnases pour les afficher sur la carte
 $sql = "SELECT Id_Gymnase, Nom, Coordonnees_lattitude, Coordonnees_longitude, Adresse, Ville, Zip FROM gymnase";
 $result = $conn->query($sql);
 
@@ -52,8 +51,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
             $stmt->close();
         }
-
-        // Cas 2 : Ajout d'une réservation
         elseif ($action == 'add_reservation') {
             $gymid= $_POST['gymeid'];
             $userid = $_SESSION['user_id'];
@@ -92,10 +89,9 @@ $conn->close();
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 </head>
 <body>
-     <?php include 'menu.html'; ?>
+         <?php include 'menu.php'; ?>
     <h1>Localisation des Gymnases</h1>
 
-    <!-- Bouton pour ajouter un gymnase (visible uniquement pour les admins) -->
     <div>
         <?php if ($connect->isAdmin()): ?>
             <button id="btnOpengymModal">Créer un gymnase</button>

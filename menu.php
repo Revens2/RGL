@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+<?php
+session_start();
+
+?>
+
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 </head>
 <body>
@@ -10,6 +15,20 @@
                     <img src="icons/home.png" alt="Home">
                 </a>
             </li>
+        <?php if ($connect->isClient()): ?>
+             <li>
+                <a href="reservation.php">
+                    <img src="icons/reservation.png" alt="Booking">
+                </a>
+            </li>
+         <?php endif; ?>
+        <?php if ($connect->isAdmin()): ?>
+             <li>
+                <a href="validation.php">
+                    <img src="icons/validation.png" alt="Validation">
+                </a>
+            </li>
+         <?php endif; ?>
             <li>
                 <a href="account.html">
                     <img src="icons/user.png" alt="Account">
@@ -20,11 +39,7 @@
                      <img src="icons/logout.png" alt="Logout">
                 </a>
             </li>
-            <li>
-                <a href="reservation.php">
-                    <img src="icons/reservation.png" alt="Booking">
-                </a>
-            </li>
+            
         </ul>
     </nav>
 

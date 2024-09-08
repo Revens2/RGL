@@ -57,38 +57,7 @@ $result = $stmt->get_result();
     <div class="container">
         <h1>Gestion des Projets</h1>
 
-        <form method="POST" action="projets.php" class="project-form">
-            <div class="form-group">
-                <label for="nom_projet">Nom du projet:</label>
-                <input type="text" id="nom_projet" name="nom_projet" required>
-            </div>
 
-            <div class="form-group">
-                <label for="description">Description:</label>
-                <textarea id="description" name="description" required></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="date_debut">Date de début:</label>
-                <input type="date" id="date_debut" name="date_debut" required>
-            </div>
-
-            <div class="form-group">
-                <label for="date_fin">Date de fin:</label>
-                <input type="date" id="date_fin" name="date_fin" required>
-            </div>
-
-            <div class="form-group">
-                <label for="budget">Budget:</label>
-                <input type="number" id="budget" name="budget" step="0.01" required>
-            </div>
-
-
-
-            <div class="form-group" style="grid-column: span 2; text-align: center;">
-                <input type="submit" value="Créer le projet" class="project-submit-btn" style="grid-column: span 2; text-align: center;">
-            </div>
-        </form>
 
         <h2>Liste des Projets</h2>
         <table>
