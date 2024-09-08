@@ -54,7 +54,6 @@ $conn->close();
 ?>
 
 
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -67,18 +66,21 @@ $conn->close();
 </head>
 <body>
     <h1>Localisation des Gymnases</h1>
+
+    <!-- Bouton pour ajouter un gymnase (visible uniquement pour les admins) -->
     <div>
         <?php if ($connect->isAdmin()): ?>
-    <button id="btnOpenModal">Créer un gymnase</button>
-    <?php endif; ?>
+            <button id="btnOpengymModal">Créer un gymnase</button>
+        <?php endif; ?>
     </div>
     
-
+    <!-- Carte pour afficher les gymnases -->
     <div id="map"></div>
 
+    <!-- Modale pour ajouter un gymnase -->
     <div id="gymModal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
+            <span id="closeGymModal" class="close">&times;</span>
             <form method="POST" action="main.php">
                 <label for="nom">Nom du Gymnase :</label>
                 <input type="text" id="tbgymname" name="nom" required><br><br>
@@ -103,7 +105,29 @@ $conn->close();
         </div>
     </div>
 
+    <!-- Modale pour réserver un gymnase -->
+    <div id="resaModal" class="modal">
+        <div class="modal-content">
+            <span id="closeResaModal" class="close">&times;</span>
+            <h2>Réserver le gymnase</h2>
+            <form method="post" action="reserver.php">
+                <label for="gymNameField">Gymnase :</label>
+                <input type="text" id="gymNameField" name="gymname" readonly><br><br>
+
+                <label for="dateReservation">Quand voulez-vous réserver ?</label><br>
+                <input type="datetime-local" id="dateReservation" name="dateReservation" required><br><br>
+
+                <input type="submit" value="Confirmer la réservation">
+            </form>
+        </div>
+    </div>
+
+    <ul>
+        <li><a href="login.html" style="text-align: left;" class="btn">Déconnexion</a></li>
+    </ul>
+
     <script>
+
         var map = L.map('map').setView([48.80, 5.68], 8); 
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -112,32 +136,48 @@ $conn->close();
 
         var gymnases = <?php echo json_encode($gymnases); ?>;
 
-
         gymnases.forEach(function(gymnase) {
-            L.marker([gymnase.latitude, gymnase.longitude]).addTo(map)
-                .bindPopup(`<b>${gymnase.name}</b><br>${gymnase.address}`)
+            var popupContent = `<b>${gymnase.name}</b><br>${gymnase.address}<br>${gymnase.Ville}<br>${gymnase.Zip}`;
 
+            <?php if ($connect->isClient()): ?>
+                popupContent += `<br><button class="btnReserver" id="btnOpenresaModal" data-name="${gymnase.name}">Réserver</button>`;
+            <?php endif; ?>
+
+            L.marker([gymnase.latitude, gymnase.longitude]).addTo(map)
+                .bindPopup(popupContent)
                 .openPopup();
         });
 
 
-        var modal = document.getElementById("gymModal");
-        var btn = document.getElementById("btnOpenModal");
-        var span = document.getElementsByClassName("close")[0];
+        <?php if ($connect->isClient()): ?>
+                var resaModal = document.getElementById("resaModal");
+                var btnOpenResaModal = document.getElementById("btnOpenresaModal");
+                var closeResaModal = document.getElementById("closeResaModal");
 
-        btn.onclick = function() {
-            modal.style.display = "block";
-        }
-
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
-
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
+            btnOpenResaModal.onclick = function() {
+                resaModal.style.display = "block";
             }
-        }
+
+            closeResaModal.onclick = function() {
+                resaModal.style.display = "none";
+            }
+        <?php endif; ?>
+
+
+        <?php if ($connect->isAdmin()): ?>
+                var gymModal = document.getElementById("gymModal");
+                var btnOpenGymModal = document.getElementById("btnOpengymModal");
+                var closeGymModal = document.getElementById("closeGymModal");
+
+            btnOpenGymModal.onclick = function() {
+                   gymModal.style.display = "block";
+            }
+
+            closeGymModal.onclick = function() {
+                   gymModal.style.display = "none";
+            }
+         <?php endif; ?>  
     </script>
 </body>
 </html>
+
