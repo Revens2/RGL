@@ -92,6 +92,7 @@ $conn->close();
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 </head>
 <body>
+     <?php include 'menu.html'; ?>
     <h1>Localisation des Gymnases</h1>
 
     <!-- Bouton pour ajouter un gymnase (visible uniquement pour les admins) -->
@@ -160,11 +161,9 @@ $conn->close();
         </div>
     </div>
 
-    <ul>
-        <li><a href="login.html" style="text-align: left;" class="btn">Déconnexion</a></li>
-    </ul>
-
     <script>
+       
+
         var map = L.map('map').setView([48.80, 5.68], 8);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
