@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'Class/cConnected.php'; // Inclure la classe
+include 'Class/cConnected.php'; 
 
 $auth = new cConnected();
 

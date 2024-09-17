@@ -4,34 +4,7 @@ session_start();
 
 
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['action']) && $_POST['action'] === 'create') {
-        $nom_projet = $_POST['nom_projet'];
-        $description = $_POST['description'];
-        $date_debut = $_POST['date_debut'];
-        $date_fin = $_POST['date_fin'];
-        $budget = $_POST['budget'];
-        $id_chef = $_SESSION['user_id'];
-
-        $stmt = $conn->prepare("INSERT INTO Projet (Nom_Projet, Description, Date_Debut, Date_Fin, Budget, ID_Chef) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssdi", $nom_projet, $description, $date_debut, $date_fin, $budget, $id_chef);
-        $stmt->execute();
-        $stmt->close();
-    } elseif (isset($_POST['action']) && $_POST['action'] === 'delete') {
-        $id_projet = $_POST['id_projet'];
-        $stmt = $conn->prepare("DELETE FROM Projet WHERE ID_Projet = ?");
-        $stmt->bind_param("i", $id_projet);
-        $stmt->execute();
-        $stmt->close();
-    }
-
-    header("Location: projets.php");
-    exit();
-}
-
-
-$stmt = $conn->prepare("SELECT p.ID_Projet, p.Nom_Projet, p.Description, p.Date_Debut, p.Date_Fin, p.Budget, pe.Nom, pe.Prenom 
-                        FROM Projet p
+$stmt = $conn->prepare("SELECT FROM Projet p
                         JOIN Personne pe ON p.ID_Chef = pe.ID_Personne");
 $stmt->execute();
 $result = $stmt->get_result();

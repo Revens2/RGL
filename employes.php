@@ -3,11 +3,6 @@ include 'db_connect.php';
 session_start();
 
 
-if ($_SESSION['role'] !== 'chef de projet') {
-    header("Location: login.php");
-    exit();
-  }
-
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 

@@ -4,6 +4,92 @@ include 'db_connect.php';
 include 'Class/cConnected.php';
 $connect = new cConnected($conn);
 
+$editGymData = null;
+$showEditModal = false;
+$allSports = [];
+$associatedSports = [];
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['action'])) {
+        $action = $_POST['action'];
+
+        if ($action == 'edit_gymnase') {
+            $gymid = $_POST['gymid'];
+       
+            $stmt = $conn->prepare("SELECT * FROM gymnase WHERE Id_Gymnase = ?");
+            $stmt->bind_param("i", $gymid);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                $editGymData = $result->fetch_assoc();
+                $showEditModal = true;
+            }
+            $stmt->close();
+
+            $stmt = $conn->prepare("SELECT * FROM sport");
+            $stmt->execute();
+            $result = $stmt->get_result();
+            while ($row = $result->fetch_assoc()) {
+                $allSports[] = $row;
+            }
+            $stmt->close();
+
+  
+            $stmt = $conn->prepare("SELECT Id_Sport FROM gymnase_sport WHERE Id_Gymnase = ?");
+            $stmt->bind_param("i", $gymid);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            while ($row = $result->fetch_assoc()) {
+                $associatedSports[] = $row['Id_Sport'];
+            }
+            $stmt->close();
+        } elseif ($action == 'parametre') {
+            $gymid = $_POST['paragymid'];
+            $gymname = $_POST['paranom'];
+            $latitude = $_POST['paralatitude'];
+            $longitude = $_POST['paralongitude'];
+            $adresse = $_POST['tbparaadresse'];
+            $ville = $_POST['paraville'];
+            $zip = $_POST['parazip'];
+
+            $stmt = $conn->prepare("UPDATE gymnase SET Nom = ?, Coordonnees_lattitude = ?, Coordonnees_longitude = ?, Adresse = ?, Ville = ?, Zip = ? WHERE Id_Gymnase = ?");
+            if ($stmt === false) {
+                die("Erreur de préparation de la requête : " . $conn->error);
+            }
+
+            $stmt->bind_param("sddsssi", $gymname, $latitude, $longitude, $adresse, $ville, $zip, $gymid);
+
+            if ($stmt->execute()) {
+                // Mise à jour des sports associés
+                // Supprimer les associations existantes
+                $stmt = $conn->prepare("DELETE FROM gymnase_sport WHERE Id_Gymnase = ?");
+                $stmt->bind_param("i", $gymid);
+                $stmt->execute();
+                $stmt->close();
+
+                // Insérer les nouvelles associations
+                if (isset($_POST['sports']) && is_array($_POST['sports'])) {
+                    $stmt = $conn->prepare("INSERT INTO gymnase_sport (Id_Gymnase, Id_Sport) VALUES (?, ?)");
+                    foreach ($_POST['sports'] as $sport_id) {
+                        $stmt->bind_param("ii", $gymid, $sport_id);
+                        $stmt->execute();
+                    }
+                    $stmt->close();
+                }
+
+                echo "Le gymnase a bien été mis à jour !";
+                header("Location: main.php");
+                exit();
+            } else {
+                echo "Erreur lors de la mise à jour du gymnase : " . $stmt->error;
+            }
+            $stmt->close();
+        }
+        // ... autres actions
+    }
+}
+
+// Récupérer la liste des gymnases pour afficher sur la carte
 $sql = "SELECT Id_Gymnase, Nom, Coordonnees_lattitude, Coordonnees_longitude, Adresse, Ville, Zip FROM gymnase";
 $result = $conn->query($sql);
 
@@ -23,58 +109,6 @@ if ($result->num_rows > 0) {
     }
 }
 
-// Vérifier si un formulaire a été soumis
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['action'])) {
-        $action = $_POST['action'];
-
-        // Cas 1 : Ajout d'un gymnase
-        if ($action == 'add_gymnase') {
-            $gymname = $_POST['nom'];
-            $latitude = $_POST['latitude'];
-            $longitude = $_POST['longitude'];
-            $adresse = $_POST['tbadresse'];
-            $ville = $_POST['ville'];
-            $zip = $_POST['zip'];
-
-            $stmt = $conn->prepare("INSERT INTO gymnase (Nom, Coordonnees_lattitude, Coordonnees_longitude, Adresse, Ville, Zip) VALUES (?, ?, ?, ?, ?, ?)");
-            if ($stmt === false) {
-                die("Erreur de préparation de la requête : " . $conn->error);
-            }
-
-            $stmt->bind_param("ssssss", $gymname, $latitude, $longitude, $adresse, $ville, $zip);
-
-            if ($stmt->execute()) {
-                echo "Le gymnase a bien été ajouté !";
-            } else {
-                echo "Erreur lors de l'ajout du gymnase : " . $stmt->error;
-            }
-            $stmt->close();
-        }
-        elseif ($action == 'add_reservation') {
-            $gymid= $_POST['gymeid'];
-            $userid = $_SESSION['user_id'];
-            $sport = $_POST['sport'];
-            $datedebut = $_POST['datedebut'];
-            $datefin = $_POST['datefin'];
-
-            $stmt = $conn->prepare("INSERT INTO reservation (Id_gymnase, Id_utilisateur,Id_sport, Date_debut, Date_fin) VALUES (?, ?, ?, ?, ?)");
-            if ($stmt === false) {
-                die("Erreur de préparation de la requête : " . $conn->error);
-            }
-
-            $stmt->bind_param("sssss", $gymid, $userid, $sport, $datedebut, $datefin);
-
-            if ($stmt->execute()) {
-                echo "La réservation a bien été ajoutée !";
-            } else {
-                echo "Erreur lors de l'ajout de la réservation : " . $stmt->error;
-            }
-            $stmt->close();
-        }
-    }
-}
-
 $conn->close();
 ?>
 
@@ -83,25 +117,24 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css">
     <title>Carte des Gymnases</title>
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 </head>
 <body>
-         <?php include 'menu.php'; ?>
+    <?php include 'menu.php'; ?>
     <h1>Localisation des Gymnases</h1>
 
     <div>
         <?php if ($connect->isAdmin()): ?>
-            <button id="btnOpengymModal">Créer un gymnase</button>
+            <button id="btnOpengymModal">Ajouter un gymnase</button>
+            <button id="btnOpensportModal">Ajouter un sport</button>
         <?php endif; ?>
     </div>
-    
-    <!-- Carte pour afficher les gymnases -->
+
     <div id="map"></div>
 
-    <!-- Modale pour ajouter un gymnase -->
     <div id="gymModal" class="modal">
         <div class="modal-content">
             <span id="closeGymModal" class="close">&times;</span>
@@ -130,36 +163,98 @@ $conn->close();
         </div>
     </div>
 
-    <!-- Modale pour réserver un gymnase -->
+
+    <div id="sportModal" class="modal">
+        <div class="modal-content">
+            <span id="closesportModal" class="close">&times;</span>
+            <form method="POST" action="main.php">
+                <input type="hidden" name="action" value="add_sport">
+                <label for="sport_nom">Nom du Sport :</label>
+                <input type="text" id="tbsportname" name="sport_nom" required><br><br>
+
+                <label for="collectif">Sport Collectif :</label>
+                <input type="checkbox" id="cbCollectif" name="collectif"><br><br>
+
+                <input type="submit" value="Ajouter le sport">
+            </form>
+        </div>
+    </div>
+
+
     <div id="resaModal" class="modal">
         <div class="modal-content">
             <span id="closeResaModal" class="close">&times;</span>
             <h2>Réserver le gymnase</h2>
             <form method="POST" action="main.php">
                 <input type="hidden" name="action" value="add_reservation">
-                <label for="gymeidField">ID du Gymnase :</label>
-                <input type="number" id="gymeidField" name="gymeid" readonly><br><br>
-
-                <label for="gymNameField">Nom du Gymnase :</label>
+                <input type="hidden" id="gymeidField" name="gymeid">
+                <label for="gymNameField">Gymnase :</label>
                 <input type="text" id="gymNameField" name="gymname" readonly><br><br>
 
-                <label for="lbsport">Sport :</label>
-                <textarea id="tbsport" name="sport" required></textarea><br><br>
+                <label for="sport">Sport :</label>
+                <input type="text" id="sport" name="sport" required><br><br>
 
-                <label for="lbdatedebut">Quand voulez-vous débuter la réservation ?</label><br>
+                <label for="datedebut">Date de début :</label>
                 <input type="datetime-local" id="datedebut" name="datedebut" required><br><br>
 
-                <label for="lbdatefin">Quand voulez-vous finir la réservation ?</label><br>
+                <label for="datefin">Date de fin :</label>
                 <input type="datetime-local" id="datefin" name="datefin" required><br><br>
 
+                <?php
+                if (isset($allSports)) {
+                    foreach ($allSports as $sport) {
+                        $checked = in_array($sport['Id_Sport'], $associatedSports) ? 'checked' : '';
+                        echo '<input type="checkbox" name="sports[]" value="' . $sport['Id_Sport'] . '" ' . $checked . '> ' . htmlspecialchars($sport['Nom_du_sport']) . '<br>';
+                    }
+                }
+                ?>
+
                 <input type="submit" value="Confirmer la réservation">
+            </form>
+        </div> 
+    </div>
+
+    <div id="paraModal" class="modal" <?php if ($showEditModal)
+        echo 'style="display:block;"'; ?>>
+        <div class="modal-content">
+            <span id="closeparaModal" class="close">&times;</span>
+            <form method="POST" action="main.php">
+                <input type="hidden" name="action" value="parametre">
+                <input type="hidden" name="paragymid" value="<?php echo isset($editGymData['Id_Gymnase']) ? $editGymData['Id_Gymnase'] : ''; ?>">
+                <label for="paranom">Nom du Gymnase :</label>
+                <input type="text" id="tbparagymname" name="paranom" value="<?php echo isset($editGymData['Nom']) ? htmlspecialchars($editGymData['Nom']) : ''; ?>" required><br><br>
+
+                <label for="paralatitude">Latitude :</label>
+                <input type="number" id="tbparalatitude" name="paralatitude" step="0.000001" value="<?php echo isset($editGymData['Coordonnees_lattitude']) ? $editGymData['Coordonnees_lattitude'] : ''; ?>" required><br><br>
+
+                <label for="paralongitude">Longitude :</label>
+                <input type="number" id="tbparalongitude" name="paralongitude" step="0.000001" value="<?php echo isset($editGymData['Coordonnees_longitude']) ? $editGymData['Coordonnees_longitude'] : ''; ?>" required><br><br>
+
+                <label for="tbparaadresse">Adresse :</label>
+                <textarea id="tbparaadresse" name="tbparaadresse" required><?php echo isset($editGymData['Adresse']) ? htmlspecialchars($editGymData['Adresse']) : ''; ?></textarea><br><br>
+
+                <label for="paraville">Ville :</label>
+                <textarea id="tbparaville" name="paraville" required><?php echo isset($editGymData['Ville']) ? htmlspecialchars($editGymData['Ville']) : ''; ?></textarea><br><br>
+
+                <label for="parazip">Zip :</label>
+                <textarea id="tbparazip" name="parazip" required><?php echo isset($editGymData['Zip']) ? htmlspecialchars($editGymData['Zip']) : ''; ?></textarea><br><br>
+
+               <label for="sports">Sports disponibles :</label><br>
+                <?php
+                if (isset($allSports)) {
+                    foreach ($allSports as $sport) {
+                        $checked = in_array($sport['Id_Sport'], $associatedSports) ? 'checked' : '';
+                        echo '<input type="checkbox" name="sports[]" value="' . $sport['Id_Sport'] . '" ' . $checked . '> ' . htmlspecialchars($sport['Nom_du_sport']) . '<br>';
+                    }
+                }
+                ?>
+               
+                <input type="submit" value="Modifier le gymnase">
             </form>
         </div>
     </div>
 
     <script>
-       
-
         var map = L.map('map').setView([48.80, 5.68], 8);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -170,6 +265,15 @@ $conn->close();
 
         gymnases.forEach(function(gymnase) {
             var popupContent = `<b>${gymnase.name}</b><br>${gymnase.address}<br>${gymnase.Ville}<br>${gymnase.Zip}`;
+            <?php if ($connect->isAdmin()): ?>
+                popupContent += `
+                    <form method="POST" action="main.php">
+                        <input type="hidden" name="action" value="edit_gymnase">
+                        <input type="hidden" name="gymid" value="${gymnase.idgym}">
+                        <input type="submit" value="Parametre">
+                    </form>
+                `;
+            <?php endif; ?>
 
             <?php if ($connect->isClient()): ?>
                 popupContent += `<br><button class="btnReserver" data-name="${gymnase.name}" data-idgym="${gymnase.idgym}">Réserver</button>`;
@@ -180,8 +284,9 @@ $conn->close();
                 .openPopup();
         });
 
-        // Ouvrir et fermer la modale d'ajout de gymnase
+
         <?php if ($connect->isAdmin()): ?>
+        
             var gymModal = document.getElementById("gymModal");
             var btnOpenGymModal = document.getElementById("btnOpengymModal");
             var closeGymModal = document.getElementById("closeGymModal");
@@ -194,14 +299,31 @@ $conn->close();
                 gymModal.style.display = "none";
             }
 
-            window.onclick = function(event) {
+            window.addEventListener('click', function(event) {
                 if (event.target == gymModal) {
                     gymModal.style.display = "none";
                 }
+            });
+
+            var sportModal = document.getElementById("sportModal");
+            var btnOpenSportModal = document.getElementById("btnOpensportModal");
+            var closeSportModal = document.getElementById("closesportModal");
+
+            btnOpenSportModal.onclick = function() {
+                sportModal.style.display = "block";
             }
+
+            closeSportModal.onclick = function() {
+                sportModal.style.display = "none";
+            }
+
+            window.addEventListener('click', function(event) {
+                if (event.target == sportModal) {
+                    sportModal.style.display = "none";
+                }
+            });
         <?php endif; ?>
 
-        // Ouvrir et fermer la modale de réservation
         document.addEventListener('click', function(event) {
             if (event.target && event.target.classList.contains('btnReserver')) {
                 var gymName = event.target.getAttribute('data-name');
@@ -217,12 +339,24 @@ $conn->close();
             document.getElementById('resaModal').style.display = "none";
         }
 
-        window.onclick = function(event) {
+        window.addEventListener('click', function(event) {
             if (event.target == document.getElementById('resaModal')) {
                 document.getElementById('resaModal').style.display = "none";
             }
+        });
+
+        var closeParaModal = document.getElementById("closeparaModal");
+        closeParaModal.onclick = function() {
+            document.getElementById('paraModal').style.display = "none";
         }
+
+        window.addEventListener('click', function(event) {
+            if (event.target == document.getElementById('paraModal')) {
+                document.getElementById('paraModal').style.display = "none";
+            }
+        });
     </script>
 </body>
 </html>
+
 
