@@ -47,8 +47,9 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+      <?php include 'menu.php'; ?>
     <div class="container">
-        <h1>Gestion des Factures</h1>
+        <h1>Mes Réservation</h1>
 
 
         <form method="POST" action="factures.php" class="facture-form">
@@ -112,11 +113,6 @@ $result = $stmt->get_result();
 
         
     </div>
-</body>
-<body>
-    <ul>
-            <li><a href="dashboard.html" class="btn">Retour</a></li>
-        </ul>
 </body>
 </html>
 

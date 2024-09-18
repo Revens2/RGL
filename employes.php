@@ -53,8 +53,9 @@ $result = $employes_result->get_result();
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+      <?php include 'menu.php'; ?>
     <div class="container">
-        <h1>Gestion des Employés</h1>
+        <h1>Mes Réservation</h1>
 
         <form method="POST" action="employes.php" class="employee-form">
             <input type="hidden" name="action" value="create">
@@ -114,12 +115,6 @@ $result = $employes_result->get_result();
 
     </div>
 </body>
-<body>        
-        <ul>
-            <li><a href="dashboard.html" style="text-align: left;" class="btn">Retour</a></li>
-        </ul>
-    
-</body>    
 </html>
 
 <?php

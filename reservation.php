@@ -1,11 +1,19 @@
 <?php
-include 'db_connect.php';
+
 session_start();
+include 'db_connect.php';
+include 'Class/cConnected.php';
+$connect = new cConnected($conn);
 
 
+$userid = $_SESSION['user_id'];
+$stmt = $conn->prepare("select r.Id_reservation, r.Date_debut, r.Date_fin, s.Nom_du_sport, r.statut, g.nom 
+from reservation r
+join sport s on s.Id_Sport=r.Id_Sport 
+join gymnase g on g.Id_Gymnase=r.Id_Gymnase
+where Id_Utilisateur= ? ");
 
-$stmt = $conn->prepare("SELECT FROM Projet p
-                        JOIN Personne pe ON p.ID_Chef = pe.ID_Personne");
+$stmt->bind_param("i", $userid);
 $stmt->execute();
 $result = $stmt->get_result();
 ?>
@@ -27,35 +35,34 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+      <?php include 'menu.php'; ?>
     <div class="container">
-        <h1>Gestion des Projets</h1>
+        <h1>Mes Réservations</h1>
 
 
 
-        <h2>Liste des Projets</h2>
+        <h2>Liste de mes Réservations</h2>
         <table>
             <tr>
-                <th>Nom du Projet</th>
-                <th>Description</th>
+                <th>Statut</th>
+                <th>Sport</th>
+                <th>Gymanse</th>
                 <th>Date de Début</th>
                 <th>Date de Fin</th>
-                <th>Budget</th>
-                <th>Chef de Projet</th>
                 <th>Actions</th>
             </tr>
              <?php while ($row = $result->fetch_assoc()): ?>
         <tr>
-            <td><?php echo htmlspecialchars($row['Nom_Projet']); ?></td>
-            <td><?php echo htmlspecialchars($row['Description']); ?></td>
-            <td><?php echo htmlspecialchars($row['Date_Debut']); ?></td>
-            <td><?php echo htmlspecialchars($row['Date_Fin']); ?></td>
-            <td><?php echo htmlspecialchars($row['Budget']); ?></td>
-            <td><?php echo htmlspecialchars($row['Prenom'] . ' ' . $row['Nom']); ?></td>
+            <td><?php echo htmlspecialchars($row['statut']); ?></td>
+            <td><?php echo htmlspecialchars($row['Nom_du_sport']); ?></td>
+            <td><?php echo htmlspecialchars($row['nom']); ?></td>
+            <td><?php echo htmlspecialchars($row['Date_debut']); ?></td>
+            <td><?php echo htmlspecialchars($row['Date_fin']); ?></td>
             <td>
 
                 <form method="POST" action="projets.php" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');">
                     <input type="hidden" name="action" value="delete">
-                    <input type="hidden" name="id_projet" value="<?php echo $row['ID_Projet']; ?>">
+                    <input type="hidden" name="id_projet" value="<?php echo $row['Id_reservation']; ?>">
                     <input type="submit" class="btn btn-delete" value="Supprimer">
                 </form>
             </td>
@@ -63,12 +70,6 @@ $result = $stmt->get_result();
         <?php endwhile; ?>
         </table>
     </div>
-</body>
-<body>        
-        <ul>
-            <li><a href="dashboard.html" style="text-align: left;" class="btn">Retour</a></li>
-        </ul>
-    
 </body>
 </html>
 

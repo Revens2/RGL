@@ -4,14 +4,11 @@ include 'db_connect.php';
 include 'Class/cConnected.php';
 $connect = new cConnected($conn);
 
-
 $editGymData = null;
 $showEditModal = false;
 $allSports = [];
 $associatedSports = [];
-$gymid = null;
-$gymData = null;
-$showResaModal = false;
+$disposport = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action'])) {
@@ -58,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $stmt = $conn->prepare("UPDATE gymnase SET Nom = ?, Coordonnees_lattitude = ?, Coordonnees_longitude = ?, Adresse = ?, Ville = ?, Zip = ? WHERE Id_Gymnase = ?");
             if ($stmt === false) {
-                die("Erreur de pr√©paration de la requ√™te : " . $conn->error);
+                die("Erreur de prÈparation de la requÍte : " . $conn->error);
             }
 
             $stmt->bind_param("sddsssi", $gymname, $latitude, $longitude, $adresse, $ville, $zip, $gymid);
@@ -80,38 +77,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $stmt->close();
                 }
 
-                echo "Le gymnase a bien √©t√© mis √† jour !";
+                echo "Le gymnase a bien ÈtÈ mis ‡ jour !";
                 header("Location: main.php");
                 exit();
             } else {
-                echo "Erreur lors de la mise √† jour du gymnase : " . $stmt->error;
+                echo "Erreur lors de la mise ‡ jour du gymnase : " . $stmt->error;
             }
             $stmt->close();
         } elseif ($action == 'add_reservation') {
             $gymid = $_POST['gymeid'];
-            $userid = $_SESSION['user_id'];
-            $sport = $_POST['sport'];
-            $datedebut = $_POST['datedebut'];
-            $datefin = $_POST['datefin'];
-            $commentaire = $_POST['commentaire'];
-            $statut = 1;
 
-            $stmt = $conn->prepare("INSERT INTO reservation (Id_Gymnase, Id_utilisateur, Id_Sport, Date_debut, Date_fin, Commentaire, statut) VALUES (?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("iiissii", $gymid, $userid, $sport, $datedebut, $datefin, $commentaire, $statut);
+            // RÈcupÈrer les informations du gymnase
+            $stmt = $conn->prepare("SELECT * FROM gymnase WHERE Id_Gymnase = ?");
+            $stmt->bind_param("i", $gymid);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $gymData = $result->fetch_assoc();
+            $stmt->close();
 
-            if ($stmt->execute()) {
-                echo "La r√©servation a bien √©t√© ajout√©e √† la liste d'attente !";
-                header("Location: main.php");
-                exit();
-            } else {
-                echo "Erreur lors de l'ajout de la r√©servation : " . $stmt->error;
+            // RÈcupÈrer les sports disponibles pour ce gymnase
+            $stmt = $conn->prepare("SELECT s.Id_Sport, s.Nom_du_sport FROM sport s JOIN gymnase_sport gs ON s.Id_Sport = gs.Id_Sport WHERE gs.Id_Gymnase = ?");
+            $stmt->bind_param("i", $gymid);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            while ($row = $result->fetch_assoc()) {
+                $disposport[] = $row;
             }
             $stmt->close();
+
+            // Indiquer que la popup de rÈservation doit Ítre affichÈe
+            $showResaModal = true;
         }
     }
 }
 
-// R√©cup√©rer la liste des gymnases pour afficher sur la carte
 $sql = "SELECT Id_Gymnase, Nom, Coordonnees_lattitude, Coordonnees_longitude, Adresse, Ville, Zip FROM gymnase";
 $result = $conn->query($sql);
 
@@ -119,56 +118,20 @@ $gymnases = [];
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $gymId = $row['Id_Gymnase'];
         $gymnases[] = [
-            'idgym' => $gymId,
+            'idgym' => $row['Id_Gymnase'],
             'name' => $row['Nom'],
             'latitude' => $row['Coordonnees_lattitude'],
             'longitude' => $row['Coordonnees_longitude'],
             'address' => $row['Adresse'],
             'Ville' => $row['Ville'],
-            'Zip' => $row['Zip'],
-            'sports' => []
+            'Zip' => $row['Zip']
         ];
-    }
-}
-
-// R√©cup√©rer les associations gymnase_sport
-$sql = "SELECT Id_Gymnase, Id_Sport FROM gymnase_sport";
-$result = $conn->query($sql);
-
-$gymnaseSports = [];
-
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $gymId = $row['Id_Gymnase'];
-        $sportId = $row['Id_Sport'];
-        $gymnaseSports[$gymId][] = $sportId;
-    }
-}
-
-// Affecter les sports aux gymnases
-foreach ($gymnases as &$gymnase) {
-    $gymId = $gymnase['idgym'];
-    $gymnase['sports'] = isset($gymnaseSports[$gymId]) ? $gymnaseSports[$gymId] : [];
-}
-
-// R√©cup√©rer tous les sports
-$sql = "SELECT Id_Sport, Nom_du_sport FROM sport";
-$result = $conn->query($sql);
-
-$sports = [];
-
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $sports[$row['Id_Sport']] = $row['Nom_du_sport'];
     }
 }
 
 $conn->close();
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -179,10 +142,6 @@ $conn->close();
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
-     <script>
-        var gymnases = <?php echo json_encode($gymnases); ?>;
-        var sports = <?php echo json_encode($sports); ?>;
-    </script>
 </head>
 <body>
     <?php include 'menu.php'; ?>
@@ -242,30 +201,38 @@ $conn->close();
         </div>
     </div>
 
-
-   <div id="resaModal" class="modal">
+    <div id="resaModal" class="modal" <?php if (isset($showResaModal) && $showResaModal) echo 'style="display:block;"'; ?>>
+   
         <div class="modal-content">
             <span id="closeResaModal" class="close">&times;</span>
-            <h2>R√©server le gymnase</h2>
+            <h2>RÈserver le gymnase</h2>
             <form method="POST" action="main.php">
                 <input type="hidden" name="action" value="add_reservation">
                 <input type="hidden" id="gymeidField" name="gymeid">
                 <label for="gymNameField">Gymnase :</label>
                 <input type="text" id="gymNameField" name="gymname" readonly><br><br>
 
-                <label for="datedebut">Date de d√©but :</label>
+                <label for="sport">Sport :</label>
+                <input type="text" id="sport" name="sport" required><br><br>
+
+                <label for="datedebut">Date de dÈbut :</label>
                 <input type="datetime-local" id="datedebut" name="datedebut" required><br><br>
 
                 <label for="datefin">Date de fin :</label>
                 <input type="datetime-local" id="datefin" name="datefin" required><br><br>
 
                 <label for="sports">Sports disponibles :</label><br>
-                <div id="sportsContainer"></div>
+                <?php
+                if (!empty($disposport)) {
+                    foreach ($disposport as $sport) {
+                        echo '<input type="radio" name="sport" value="' . $sport['Id_Sport'] . '" required> ' . htmlspecialchars($sport['Nom_du_sport']) . '<br>';
+                    }
+                } else {
+                    echo 'Aucun sport disponible pour ce gymnase.';
+                }
+                ?>
 
-                  <label for="commentaire">Commentaire :</label>
-                <input type="text" id="commentaire" name="commentaire" required><br><br>
-
-                <input type="submit" value="Confirmer la r√©servation">
+                <input type="submit" value="Confirmer la rÈservation">
             </form>
         </div> 
     </div>
@@ -311,12 +278,13 @@ $conn->close();
     </div>
 
     <script>
-        // Initialiser la carte
         var map = L.map('map').setView([48.80, 5.68], 8);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
         }).addTo(map);
+
+        var gymnases = <?php echo json_encode($gymnases); ?>;
 
         gymnases.forEach(function(gymnase) {
             var popupContent = `<b>${gymnase.name}</b><br>${gymnase.address}<br>${gymnase.Ville}<br>${gymnase.Zip}`;
@@ -325,66 +293,19 @@ $conn->close();
                     <form method="POST" action="main.php">
                         <input type="hidden" name="action" value="edit_gymnase">
                         <input type="hidden" name="gymid" value="${gymnase.idgym}">
-                        <input type="submit" value="Param√®tre">
+                        <input type="submit" value="Parametre">
                     </form>
                 `;
             <?php endif; ?>
 
             <?php if ($connect->isClient()): ?>
-                popupContent += `<br><button class="btnReserver" data-name="${gymnase.name}" data-idgym="${gymnase.idgym}">R√©server</button>`;
+                popupContent += `<br><button class="btnReserver" data-name="${gymnase.name}" data-idgym="${gymnase.idgym}">RÈserver</button>`;
             <?php endif; ?>
 
             L.marker([gymnase.latitude, gymnase.longitude]).addTo(map)
-                .bindPopup(popupContent);
+                .bindPopup(popupContent)
+                .openPopup();
         });
-
-        // Gestion du clic sur le bouton "R√©server"
-        document.addEventListener('click', function(event) {
-            if (event.target && event.target.classList.contains('btnReserver')) {
-                var gymId = event.target.getAttribute('data-idgym');
-                var gymName = event.target.getAttribute('data-name');
-                document.getElementById('gymNameField').value = gymName;
-                document.getElementById('gymeidField').value = gymId;
-
-                // Obtenir les sports pour ce gymnase
-                var selectedGym = gymnases.find(function(gym) {
-                    return gym.idgym == gymId;
-                });
-                var sportsForGym = selectedGym.sports; // Tableau des IDs des sports
-
-                var sportsContainer = document.getElementById('sportsContainer');
-                sportsContainer.innerHTML = ''; // Vider le contenu pr√©c√©dent
-
-                if (sportsForGym.length > 0) {
-                    sportsForGym.forEach(function(sportId) {
-                        var sportName = sports[sportId];
-                        var radio = document.createElement('input');
-                        radio.type = 'radio';
-                        radio.name = 'sport';
-                        radio.value = sportId;
-                        radio.required = true;
-
-                        var label = document.createElement('label');
-                        label.appendChild(radio);
-                        label.appendChild(document.createTextNode(' ' + sportName));
-
-                        sportsContainer.appendChild(label);
-                        sportsContainer.appendChild(document.createElement('br'));
-                    });
-                } else {
-                    sportsContainer.innerHTML = 'Aucun sport disponible pour ce gymnase.';
-                }
-
-                document.getElementById('resaModal').style.display = "block";
-            }
-        });
-
-        // Code pour fermer la popup de r√©servation
-        var closeResaModal = document.getElementById("closeResaModal");
-        closeResaModal.onclick = function() {
-            document.getElementById('resaModal').style.display = "none";
-        }
-
 
 
         <?php if ($connect->isAdmin()): ?>
@@ -426,6 +347,18 @@ $conn->close();
             });
         <?php endif; ?>
 
+       
+
+        var closeParaModal = document.getElementById("closeparaModal");
+        closeParaModal.onclick = function() {
+            document.getElementById('paraModal').style.display = "none";
+        }
+
+        window.addEventListener('click', function(event) {
+            if (event.target == document.getElementById('paraModal')) {
+                document.getElementById('paraModal').style.display = "none";
+            }
+        });
     </script>
 </body>
 </html>
