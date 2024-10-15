@@ -3,7 +3,25 @@
 session_start();
 include 'db_connect.php';
 include 'Class/cConnected.php';
+
+
 $connect = new cConnected($conn);
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['action'])) {
+        $action = $_POST['action'];
+        if ($action == 'edit_gymnase') {
+
+            $resa = $_POST['Id_reservation'];
+
+            $stmt = $conn->prepare("update reservation set statut = 0 where Id_reservation = ?");
+            $stmt->bind_param("i", $resa);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+    }
+
+}
 
 
 $userid = $_SESSION['user_id'];
@@ -58,10 +76,11 @@ $result = $stmt->get_result();
             <td><?php echo htmlspecialchars($row['nom']); ?></td>
             <td><?php echo htmlspecialchars($row['Date_debut']); ?></td>
             <td><?php echo htmlspecialchars($row['Date_fin']); ?></td>
-            <td>
 
-                <form method="POST" action="projets.php" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');">
-                    <input type="hidden" name="action" value="delete">
+            <td>
+                
+                <form method="POST" action="reservation.php" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette reservation ?');">
+                    <input type="hidden" name="action" value="supp">
                     <input type="hidden" name="id_projet" value="<?php echo $row['Id_reservation']; ?>">
                     <input type="submit" class="btn btn-delete" value="Supprimer">
                 </form>

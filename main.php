@@ -111,7 +111,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Récupérer la liste des gymnases pour afficher sur la carte
 $sql = "SELECT Id_Gymnase, Nom, Coordonnees_lattitude, Coordonnees_longitude, Adresse, Ville, Zip FROM gymnase";
 $result = $conn->query($sql);
 
@@ -133,7 +132,6 @@ if ($result->num_rows > 0) {
     }
 }
 
-// Récupérer les associations gymnase_sport
 $sql = "SELECT Id_Gymnase, Id_Sport FROM gymnase_sport";
 $result = $conn->query($sql);
 
@@ -147,13 +145,11 @@ if ($result->num_rows > 0) {
     }
 }
 
-// Affecter les sports aux gymnases
 foreach ($gymnases as &$gymnase) {
     $gymId = $gymnase['idgym'];
     $gymnase['sports'] = isset($gymnaseSports[$gymId]) ? $gymnaseSports[$gymId] : [];
 }
 
-// Récupérer tous les sports
 $sql = "SELECT Id_Sport, Nom_du_sport FROM sport";
 $result = $conn->query($sql);
 
