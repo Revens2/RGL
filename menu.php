@@ -30,7 +30,7 @@ session_start();
             </li>
          <?php endif; ?>
             <li>
-                <a href="account.html">
+                <a href="account.php">
                     <img src="icons/user.png" alt="Account">
                 </a>
             </li>

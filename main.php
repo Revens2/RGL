@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $statut = 1;
 
             $stmt = $conn->prepare("INSERT INTO reservation (Id_Gymnase, Id_utilisateur, Id_Sport, Date_debut, Date_fin, Commentaire, statut) VALUES (?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("iiissii", $gymid, $userid, $sport, $datedebut, $datefin, $commentaire, $statut);
+            $stmt->bind_param("iiisssi", $gymid, $userid, $sport, $datedebut, $datefin, $commentaire, $statut);
 
             if ($stmt->execute()) {
                 echo "La réservation a bien été ajoutée à la liste d'attente !";

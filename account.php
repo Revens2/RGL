@@ -1,0 +1,95 @@
+<?php
+session_start();
+include 'db_connect.php';
+include 'Class/cConnected.php';
+$connect = new cConnected($conn);
+
+$userId = $_SESSION['user_id'];
+$stmt = $conn->prepare("SELECT Nom, Prenom, Date_de_naissance, Numero_de_telephone, Email, Adresse, Zip, Ville FROM utilisateur WHERE Id_Utilisateur = ?");
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+$userData = $result->fetch_assoc();
+$stmt->close();
+?>
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mon Compte</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .account-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .account-container h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .account-container label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+
+        .account-container input[type="text"],
+        .account-container input[type="email"],
+        .account-container input[type="tel"],
+        .account-container input[type="date"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .account-container input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .account-container input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <?php include 'menu.php'; ?>
+    <div class="account-container">
+        <h2>Mon Compte</h2>
+        <form method="POST" action="update_account.php">
+            <label for="nom">Nom :</label>
+            <input type="text" id="nom" name="nom" value="<?php echo isset($userData['Nom']) ? $1 : ''; ?>" required>Prénom :</label>
+            <input type="text" id="prenom" name="prenom" value="<?php echo isset($userData['Prenom']) ? $1 : ''; ?>" required>Date de naissance :</label>
+            <input type="date" id="date_naissance" name="date_naissance" value="<?php echo isset($userData['Date_de_naissance']) ? $1 : ''; ?>" required>Numéro de téléphone :</label>
+            <input type="tel" id="telephone" name="telephone" value="<?php echo isset($userData['Numero_de_telephone']) ? $1 : ''; ?>" required>Email :</label>
+            <input type="email" id="email" name="email" value="<?php echo isset($userData['Email']) ? $1 : ''; ?>" required>Adresse :</label>
+            <input type="text" id="adresse" name="adresse" value="<?php echo isset($userData['Adresse']) ? $1 : ''; ?>" required>Code Postal :</label>
+            <input type="text" id="zip" name="zip" value="<?php echo isset($userData['Zip']) ? $1 : ''; ?>" required>Ville :</label>
+            <input type="text" id="ville" name="ville" value="<?php echo isset($userData['Ville']) ? $1 : ''; ?>" required>
+        </form>
+    </div>
+</body>
+
+</html>
+
+<?php
+$conn->close();
+?>
