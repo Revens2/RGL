@@ -2,53 +2,48 @@
 session_start();
 include 'db_connect.php';
 include 'Class/cConnected.php';
-$connect = new cConnected($conn);
+include 'Class/cReservation.php';
 
-$stmt = $conn->prepare("SELECT r.Id_reservation, r.Date_debut, r.Date_fin, s.Nom_du_sport, r.statut, g.nom, u.Nom, u.Prenom
-FROM reservation r
-JOIN sport s ON s.Id_Sport = r.Id_Sport
-JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase
-JOIN utilisateur u ON u.Id_Utilisateur = r.Id_Utilisateur");
-$stmt->execute();
-$result = $stmt->get_result();
+$connect = new cConnected($conn);
+$reserv = new cReservation($conn);
+
+$result = $reserv->getUserValidation();
+
 
 $editGymData = null;
+
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action'])) {
         $action = $_POST['action'];
 
         if ($action == 'resaedit') {
+            $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
+            $editGymData = $reserv->getReservationDetails($resaid); 
+        
 
-            $resaid = $_POST['Id_reservation'];
-
-            $stmt = $conn->prepare("SELECT r.Date_debut, r.Date_fin, r.Commentaire, g.Nom, s.Nom_du_sport
-                                    FROM reservation r
-                                    JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase
-                                    JOIN sport s ON s.Id_Sport = r.Id_Sport
-                                    WHERE Id_reservation = ?");
-            $stmt->bind_param("i", $resaid);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            if ($result->num_rows > 0) {
-                $editGymData = $result->fetch_assoc();
-            }
-            $stmt->close();
         } elseif ($action == 'saveedit') {
 
-            $valid= $_POST['ddlvalid'];   
-            $resaid = $_POST['Id_reservation'];
-            $datedebut = $_POST['datedebut'];
-            $datefin = $_POST['datefin'];
-            $commentaire = $_POST['commentaire'];
+            $valid = isset($_POST['ddlvalid']) ? (int) $_POST['ddlvalid'] : null;
+            $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
+            $reserv->editReservation($valid,$resaid);
 
-            $updateStmt = $conn->prepare("UPDATE reservation SET Date_debut = ?, Date_fin = ?, Commentaire = ?, statut = ? WHERE Id_reservation = ?");
-            $updateStmt->bind_param("sssii", $datedebut, $datefin, $commentaire, $valid, $resaid );
-            $updateStmt->execute();
-            $updateStmt->close();
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
+
+        
+        } elseif ($action == 'delete') {
+
+            
+            $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
+            $reserv->cancelReservation($resaid);
+
             header("Location: " . $_SERVER['PHP_SELF']);
             exit();
 
         }
+
+        
     }
 }
 
@@ -162,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </form>
                     <form method="POST" action="validation.php" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');" style="display:inline;">
                         <input type="hidden" name="action" value="delete">
-                        <input type="hidden" name="id_projet" value="<?php echo $row['Id_reservation']; ?>">
+                        <input type="hidden" name="Id_reservation" value="<?php echo $row['Id_reservation']; ?>">
                         <input type="submit" class="btn btn-delete" value="Supprimer">
                     </form>
                 </td>
@@ -170,39 +165,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <?php endwhile; ?>
         </table>
 
-        <?php if ($editGymData): ?>
-        <h2>Modifier la Réservation</h2>
-        <form method="POST" action="validation.php">
-            <input type="hidden" name="action" value="saveedit">
-            <input type="hidden" name="Id_reservation" value="<?php echo htmlspecialchars($resaid); ?>">
-            <label for="ddlvalid">Validation :</label>
-            
-            <select id="ddlvalid" name="ddlvalid">
-                <option value="">--Sélectionnez un gymnase--</option>
-                <option value="2">Valider</option>
-                <option value="3">En attente</option>
-                <option value="4">Refuser</option>
-            </select>
+      <?php if ($editGymData): ?>
+    <h2>Modifier la Réservation</h2>
+    <form method="POST" action="validation.php">
+        <input type="hidden" name="action" value="saveedit">
+        <input type="hidden" name="Id_reservation" value="<?php echo htmlspecialchars($resaid); ?>">
+        <label for="ddlvalid">Validation :</label>
+        
+        <select id="ddlvalid" name="ddlvalid">
+            <option value="2" <?php echo ($editGymData['statut'] == 2) ? 'selected' : ''; ?>>Valider</option>
+            <option value="3" <?php echo ($editGymData['statut'] == 3) ? 'selected' : ''; ?>>En attente</option>
+            <option value="4" <?php echo ($editGymData['statut'] == 4) ? 'selected' : ''; ?>>Refuser</option>
+        </select>
 
-            <label for="gymNameField">Gymnase :</label>
-            <input type="text" id="gymNameField" name="gymname" value="<?php echo htmlspecialchars($editGymData['Nom']); ?>" readonly><br><br>
+        <label for="gymNameField">Gymnase :</label>
+        <input type="text" id="gymNameField" name="gymname" value="<?php echo htmlspecialchars($editGymData['Nom']); ?>" readonly><br><br>
 
-             <label for="sport">Sport :</label>
-            <input type="text" id="sport" name="sport" value="<?php echo htmlspecialchars($editGymData['Nom_du_sport']); ?>" required><br><br>
+        <label for="sport">Sport :</label>
+        <input type="text" id="sport" name="sport" value="<?php echo htmlspecialchars($editGymData['Nom_du_sport']); ?>" readonly><br><br>
 
+        <label for="datedebut">Date de début :</label>
+        <input type="datetime-local" id="datedebut" name="datedebut" value="<?php echo htmlspecialchars($editGymData['Date_debut']); ?>" readonly><br><br>
 
-            <label for="datedebut">Date de début :</label>
-            <input type="datetime-local" id="datedebut" name="datedebut" value="<?php echo htmlspecialchars($editGymData['Date_debut']); ?>" required><br><br>
+        <label for="datefin">Date de fin :</label>
+        <input type="datetime-local" id="datefin" name="datefin" value="<?php echo htmlspecialchars($editGymData['Date_fin']); ?>" readonly><br><br>
 
-            <label for="datefin">Date de fin :</label>
-            <input type="datetime-local" id="datefin" name="datefin" value="<?php echo htmlspecialchars($editGymData['Date_fin']); ?>" required><br><br>
+        <label for="commentaire">Commentaire :</label>
+        <input type="text" id="commentaire" name="commentaire" value="<?php echo htmlspecialchars($editGymData['Commentaire']); ?>" readonly><br><br>
 
-            <label for="commentaire">Commentaire :</label>
-            <input type="text" id="commentaire" name="commentaire" value="<?php echo htmlspecialchars($editGymData['Commentaire']); ?>" required><br><br>
+        <input type="submit" value="Confirmer la réservation">
+    </form>
+<?php endif; ?>
 
-            <input type="submit" value="Confirmer la réservation">
-        </form>
-        <?php endif; ?>
     </div>
 </body>
 

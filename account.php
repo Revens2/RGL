@@ -4,13 +4,9 @@ include 'db_connect.php';
 include 'Class/cConnected.php';
 $connect = new cConnected($conn);
 
-$userId = $_SESSION['user_id'];
-$stmt = $conn->prepare("SELECT Nom, Prenom, Date_de_naissance, Numero_de_telephone, Email, Adresse, Zip, Ville FROM utilisateur WHERE Id_Utilisateur = ?");
-$stmt->bind_param("i", $userId);
-$stmt->execute();
-$result = $stmt->get_result();
-$userData = $result->fetch_assoc();
-$stmt->close();
+
+$userData = $connect->account();
+
 ?>
 
 <!DOCTYPE html>

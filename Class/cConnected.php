@@ -103,6 +103,15 @@ class cConnected
         }
         return null;
     }
-    
+     public function account() {
+        $userId = $_SESSION['user_id'];
+        $query = $this->db->prepare("SELECT Nom, Prenom, Date_de_naissance, Numero_de_telephone, Email, Adresse, Zip, Ville FROM utilisateur WHERE Id_Utilisateur = ?");
+        $query->bind_param("i", $userId);
+        $query->execute();
+        $result = $query->get_result();
+        $userData = $result->fetch_assoc();
+        $query->close();
+        return $userData;
+    }
 
 }

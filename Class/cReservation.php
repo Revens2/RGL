@@ -40,40 +40,47 @@ class cReservation
         return $reservations;
     }
 
+    public function getUserValidation()
+    {
+        $stmt = $this->conn->prepare("SELECT r.Id_reservation, r.Date_debut, r.Date_fin, s.Nom_du_sport, r.statut, g.nom, u.Nom, u.Prenom
+        FROM reservation r
+        JOIN sport s ON s.Id_Sport = r.Id_Sport
+        JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase
+        JOIN utilisateur u ON u.Id_Utilisateur = r.Id_Utilisateur");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result;
+    }
+
+
     public function getReservationDetails($reservationId)
     {
+        $editGymData = null;
         $stmt = $this->conn->prepare("SELECT r.Date_debut, r.Date_fin, r.Commentaire, g.Nom, s.Nom_du_sport FROM reservation r JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase JOIN sport s ON s.Id_Sport = r.Id_Sport WHERE Id_reservation = ?");
         $stmt->bind_param("i", $reservationId);
         $stmt->execute();
         $result = $stmt->get_result();
-
         if ($result->num_rows > 0) {
-            return $result->fetch_assoc();
-        } else {
-            return null;
+            $editGymData = $result->fetch_assoc();
         }
+        $stmt->close();
+        return $editGymData;
     }
 
-    public function editReservation($reservationId, $dateDebut, $dateFin, $commentaire, $statut)
+    public function editReservation($valid, $resaid)
     {
-        $stmt = $this->conn->prepare("UPDATE reservation SET Date_debut = ?, Date_fin = ?, Commentaire = ?, statut = ? WHERE Id_reservation = ?");
-        $stmt->bind_param("sssii", $dateDebut, $dateFin, $commentaire, $statut, $reservationId);
-        if ($stmt->execute()) {
-            return "La réservation a été mise à jour avec succès.";
-        } else {
-            return "Erreur lors de la mise à jour de la réservation : " . $stmt->error;
-        }
+        $stmt = $this->conn->prepare("UPDATE reservation SET statut = ? WHERE Id_reservation = ?");
+        $stmt->bind_param("ii", $valid, $resaid);
+        $stmt->execute();
+        $stmt->close();
     }
 
-    public function cancelReservation($reservationId)
+    public function cancelReservation($resaid)
     {
         $stmt = $this->conn->prepare("UPDATE reservation SET statut = 0 WHERE Id_reservation = ?");
-        $stmt->bind_param("i", $reservationId);
-        if ($stmt->execute()) {
-            return "La réservation a été annulée avec succès.";
-        } else {
-            return "Erreur lors de l'annulation de la réservation : " . $stmt->error;
-        }
+        $stmt->bind_param("i", $resaid);
+        $stmt->execute();
+        $stmt->close();
     }
 }
 
