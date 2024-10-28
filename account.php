@@ -76,14 +76,30 @@ $stmt->close();
         <h2>Mon Compte</h2>
         <form method="POST" action="update_account.php">
             <label for="nom">Nom :</label>
-            <input type="text" id="nom" name="nom" value="<?php echo isset($userData['Nom']) ? $1 : ''; ?>" required>Prénom :</label>
-            <input type="text" id="prenom" name="prenom" value="<?php echo isset($userData['Prenom']) ? $1 : ''; ?>" required>Date de naissance :</label>
-            <input type="date" id="date_naissance" name="date_naissance" value="<?php echo isset($userData['Date_de_naissance']) ? $1 : ''; ?>" required>Numéro de téléphone :</label>
-            <input type="tel" id="telephone" name="telephone" value="<?php echo isset($userData['Numero_de_telephone']) ? $1 : ''; ?>" required>Email :</label>
-            <input type="email" id="email" name="email" value="<?php echo isset($userData['Email']) ? $1 : ''; ?>" required>Adresse :</label>
-            <input type="text" id="adresse" name="adresse" value="<?php echo isset($userData['Adresse']) ? $1 : ''; ?>" required>Code Postal :</label>
-            <input type="text" id="zip" name="zip" value="<?php echo isset($userData['Zip']) ? $1 : ''; ?>" required>Ville :</label>
-            <input type="text" id="ville" name="ville" value="<?php echo isset($userData['Ville']) ? $1 : ''; ?>" required>
+            <input type="text" id="nom" name="nom" value="<?php echo isset($userData['Nom']) ? $userData['Nom'] : ''; ?>" required>
+
+            <label for="prenom">Prénom :</label>
+            <input type="text" id="prenom" name="prenom" value="<?php echo isset($userData['Prenom']) ? $userData['Prenom'] : ''; ?>" required>
+
+            <label for="date_naissance">Date de naissance :</label>
+            <input type="date" id="date_naissance" name="date_naissance" value="<?php echo isset($userData['Date_de_naissance']) ? $userData['Date_de_naissance'] : ''; ?>" required>
+
+            <label for="telephone">Numéro de téléphone :</label>
+            <input type="tel" id="telephone" name="telephone" value="<?php echo isset($userData['Numero_de_telephone']) ? $userData['Numero_de_telephone'] : ''; ?>" required>
+
+            <label for="email">Email :</label>
+            <input type="email" id="email" name="email" value="<?php echo isset($userData['Email']) ? $userData['Email'] : ''; ?>" required>
+
+            <label for="adresse">Adresse :</label>
+            <input type="text" id="adresse" name="adresse" value="<?php echo isset($userData['Adresse']) ? $userData['Adresse'] : ''; ?>" required>
+
+            <label for="zip">Code Postal :</label>
+            <input type="text" id="zip" name="zip" value="<?php echo isset($userData['Zip']) ? $userData['Zip'] : ''; ?>" required>
+
+            <label for="ville">Ville :</label>
+            <input type="text" id="ville" name="ville" value="<?php echo isset($userData['Ville']) ? $userData['Ville'] : ''; ?>" required>
+
+            <input type="submit" value="Mettre à jour">
         </form>
     </div>
 </body>

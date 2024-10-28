@@ -4,7 +4,6 @@ include 'db_connect.php';
 include 'Class/cConnected.php';
 $connect = new cConnected($conn);
 
-// Préparation de la requête principale pour afficher les réservations
 $stmt = $conn->prepare("SELECT r.Id_reservation, r.Date_debut, r.Date_fin, s.Nom_du_sport, r.statut, g.nom, u.Nom, u.Prenom
 FROM reservation r
 JOIN sport s ON s.Id_Sport = r.Id_Sport
@@ -12,14 +11,14 @@ JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase
 JOIN utilisateur u ON u.Id_Utilisateur = r.Id_Utilisateur");
 $stmt->execute();
 $result = $stmt->get_result();
-// Gestion de l'action de modification
+
 $editGymData = null;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action'])) {
         $action = $_POST['action'];
 
         if ($action == 'resaedit') {
-            // Récupérer les informations pour pré-remplir le formulaire de modification
+
             $resaid = $_POST['Id_reservation'];
 
             $stmt = $conn->prepare("SELECT r.Date_debut, r.Date_fin, r.Commentaire, g.Nom, s.Nom_du_sport
@@ -35,18 +34,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
             $stmt->close();
         } elseif ($action == 'saveedit') {
-            // Sauvegarder les modifications
+
+            $valid= $_POST['ddlvalid'];   
             $resaid = $_POST['Id_reservation'];
             $datedebut = $_POST['datedebut'];
             $datefin = $_POST['datefin'];
             $commentaire = $_POST['commentaire'];
 
-            $updateStmt = $conn->prepare("UPDATE reservation SET Date_debut = ?, Date_fin = ?, Commentaire = ? WHERE Id_reservation = ?");
-            $updateStmt->bind_param("sssi", $datedebut, $datefin, $commentaire, $resaid);
+            $updateStmt = $conn->prepare("UPDATE reservation SET Date_debut = ?, Date_fin = ?, Commentaire = ?, statut = ? WHERE Id_reservation = ?");
+            $updateStmt->bind_param("sssii", $datedebut, $datefin, $commentaire, $valid, $resaid );
             $updateStmt->execute();
             $updateStmt->close();
-
+            header("Location: " . $_SERVER['PHP_SELF']);
             exit();
+
         }
     }
 }
@@ -171,12 +172,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <?php if ($editGymData): ?>
         <h2>Modifier la Réservation</h2>
-        <form method="POST" action="projets.php">
+        <form method="POST" action="validation.php">
             <input type="hidden" name="action" value="saveedit">
             <input type="hidden" name="Id_reservation" value="<?php echo htmlspecialchars($resaid); ?>">
+            <label for="ddlvalid">Validation :</label>
+            
+            <select id="ddlvalid" name="ddlvalid">
+                <option value="">--Sélectionnez un gymnase--</option>
+                <option value="2">Valider</option>
+                <option value="3">En attente</option>
+                <option value="4">Refuser</option>
+            </select>
 
             <label for="gymNameField">Gymnase :</label>
             <input type="text" id="gymNameField" name="gymname" value="<?php echo htmlspecialchars($editGymData['Nom']); ?>" readonly><br><br>
+
+             <label for="sport">Sport :</label>
+            <input type="text" id="sport" name="sport" value="<?php echo htmlspecialchars($editGymData['Nom_du_sport']); ?>" required><br><br>
+
 
             <label for="datedebut">Date de début :</label>
             <input type="datetime-local" id="datedebut" name="datedebut" value="<?php echo htmlspecialchars($editGymData['Date_debut']); ?>" required><br><br>
@@ -194,8 +207,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </body>
 
 </html>
-
-<?php
-$stmt->close();
-$conn->close();
-?>

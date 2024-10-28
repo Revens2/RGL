@@ -1,9 +1,11 @@
 <?php
+use function MongoDB\BSON\toCanonicalExtendedJSON;
 session_start();
 include 'db_connect.php';
 include 'Class/cConnected.php';
+include 'Class/cReservation.php';
 $connect = new cConnected($conn);
-
+$reserv = new cReservation($conn);
 
 $editGymData = null;
 $showEditModal = false;
@@ -88,25 +90,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
             $stmt->close();
         } elseif ($action == 'add_reservation') {
-            $gymid = $_POST['gymeid'];
-            $userid = $_SESSION['user_id'];
-            $sport = $_POST['sport'];
-            $datedebut = $_POST['datedebut'];
-            $datefin = $_POST['datefin'];
-            $commentaire = $_POST['commentaire'];
-            $statut = 1;
-
-            $stmt = $conn->prepare("INSERT INTO reservation (Id_Gymnase, Id_utilisateur, Id_Sport, Date_debut, Date_fin, Commentaire, statut) VALUES (?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("iiisssi", $gymid, $userid, $sport, $datedebut, $datefin, $commentaire, $statut);
-
-            if ($stmt->execute()) {
-                echo "La réservation a bien été ajoutée à la liste d'attente !";
-                header("Location: main.php");
-                exit();
-            } else {
-                echo "Erreur lors de l'ajout de la réservation : " . $stmt->error;
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $gymId = isset($_POST['gymeid']) ? (int) $_POST['gymeid'] : null;
+                $userId = isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : null;
+                $sportId = isset($_POST['sport']) ? (int) $_POST['sport'] : null;
+                $dateDebut = isset($_POST['datedebut']) ? $_POST['datedebut'] : null;
+                $dateFin = isset($_POST['datefin']) ? $_POST['datefin'] : null;
+                $commentaire = isset($_POST['commentaire']) ? $_POST['commentaire'] : '';
+                $reserv->addReservation($gymId, $userId, $sportId, $dateDebut, $dateFin, $commentaire);
             }
-            $stmt->close();
+
+            
         }
     }
 }
@@ -182,10 +176,15 @@ $conn->close();
 </head>
 <body>
     <?php include 'menu.php'; ?>
-    <h1>Localisation des Gymnases</h1>
+  
 
+   
+  <div class="container">
+    <h1>Localisation des Gymnases</h1>
     <div>
+
         <?php if ($connect->isAdmin()): ?>
+
             <button id="btnOpengymModal">Ajouter un gymnase</button>
             <button id="btnOpensportModal">Ajouter un sport</button>
         <?php endif; ?>
@@ -265,6 +264,7 @@ $conn->close();
             </form>
         </div> 
     </div>
+  </div>
 
     <div id="paraModal" class="modal" <?php if ($showEditModal)
         echo 'style="display:block;"'; ?>>
@@ -307,7 +307,7 @@ $conn->close();
     </div>
 
     <script>
-        // Initialiser la carte
+
         var map = L.map('map').setView([48.80, 5.68], 8);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -334,22 +334,20 @@ $conn->close();
                 .bindPopup(popupContent);
         });
 
-        // Gestion du clic sur le bouton "Réserver"
-        document.addEventListener('click', function(event) {
+            document.addEventListener('click', function(event) {
             if (event.target && event.target.classList.contains('btnReserver')) {
                 var gymId = event.target.getAttribute('data-idgym');
                 var gymName = event.target.getAttribute('data-name');
                 document.getElementById('gymNameField').value = gymName;
                 document.getElementById('gymeidField').value = gymId;
 
-                // Obtenir les sports pour ce gymnase
                 var selectedGym = gymnases.find(function(gym) {
                     return gym.idgym == gymId;
                 });
-                var sportsForGym = selectedGym.sports; // Tableau des IDs des sports
+                var sportsForGym = selectedGym.sports; 
 
                 var sportsContainer = document.getElementById('sportsContainer');
-                sportsContainer.innerHTML = ''; // Vider le contenu précédent
+                sportsContainer.innerHTML = ''; 
 
                 if (sportsForGym.length > 0) {
                     sportsForGym.forEach(function(sportId) {
@@ -375,7 +373,7 @@ $conn->close();
             }
         });
 
-        // Code pour fermer la popup de réservation
+
         var closeResaModal = document.getElementById("closeResaModal");
         closeResaModal.onclick = function() {
             document.getElementById('resaModal').style.display = "none";

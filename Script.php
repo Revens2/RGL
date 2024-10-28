@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } elseif ($action == 'add_reservation') {
             $gymid = $_POST['gymeid'];
 
-            // Récupérer les informations du gymnase
+
             $stmt = $conn->prepare("SELECT * FROM gymnase WHERE Id_Gymnase = ?");
             $stmt->bind_param("i", $gymid);
             $stmt->execute();
@@ -95,7 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $gymData = $result->fetch_assoc();
             $stmt->close();
 
-            // Récupérer les sports disponibles pour ce gymnase
             $stmt = $conn->prepare("SELECT s.Id_Sport, s.Nom_du_sport FROM sport s JOIN gymnase_sport gs ON s.Id_Sport = gs.Id_Sport WHERE gs.Id_Gymnase = ?");
             $stmt->bind_param("i", $gymid);
             $stmt->execute();

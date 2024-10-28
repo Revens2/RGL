@@ -1,0 +1,6 @@
+A faire plutard : 
+
+- mettre toute les proc dans une class
+-retirer tout les comm 
+- renommer tout le front pour avoir tb…
+-mettre a jour le mcd 
