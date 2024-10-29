@@ -4,3 +4,4 @@ A faire plutard :
 -retirer tout les comm 
 - renommer tout le front pour avoir tb…
 -mettre a jour le mcd 
+- mettre des com de debile

@@ -127,8 +127,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
     <?php include 'menu.php'; ?>
     <div class="container">
-        <h1>Mes Réservations</h1>
-        <h2>Liste de Réservations</h2>
+        <h1>Liste des Validations </h1>
+
         <table>
             <tr>
                 <th>Statut</th>

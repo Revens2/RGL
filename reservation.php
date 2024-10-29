@@ -8,6 +8,8 @@ include 'Class/cReservation.php';
 $connect = new cConnected($conn);
 $reserv = new cReservation($conn);
 
+$editGymData = null;
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action'])) {
         $action = $_POST['action'];
@@ -15,7 +17,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $resa = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
             $reservations = $reserv->cancelReservation($resa);
-                
+
+        } elseif ($action == 'resaedit') {
+            $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
+            $editGymData = $reserv->getReservationDetails($resaid);
+
+        } elseif ($action == 'saveedit') {
+
+            $valid = isset($_POST['ddlvalid']) ? (int) $_POST['ddlvalid'] : null;
+            $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
+            $reserv->editReservation($valid, $resaid);
+
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
         }
     }
 }
@@ -62,6 +76,11 @@ $reservations = $reserv->getUserReservations($userid);
                 <td><?php echo htmlspecialchars($row['Date_debut']); ?></td>
                 <td><?php echo htmlspecialchars($row['Date_fin']); ?></td>
                 <td>
+                     <form method="POST" action="validation.php" style="display:inline;">
+                        <input type="hidden" name="action" value="resaedit">
+                        <input type="hidden" name="Id_reservation" value="<?php echo $row['Id_reservation']; ?>">
+                        <input type="submit" class="btn btn-edit" value="Valider">
+                    </form>
                     <form method="POST" action="reservation.php" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette réservation ?');">
                         <input type="hidden" name="action" value="supp">
                         <input type="hidden" name="id_projet" value="<?php echo $row['Id_reservation']; ?>">
@@ -71,7 +90,32 @@ $reservations = $reserv->getUserReservations($userid);
             </tr>
             <?php endforeach; ?>
         </table>
+          <?php if ($editGymData): ?>
+    <h2>Modifier la Réservation</h2>
+    <form method="POST" action="validation.php">
+        <input type="hidden" name="action" value="saveedit">
+        <input type="hidden" name="Id_reservation" value="<?php echo htmlspecialchars($resaid); ?>">
+
+        <label for="gymNameField">Gymnase :</label>
+        <input type="text" id="gymNameField" name="gymname" value="<?php echo htmlspecialchars($editGymData['Nom']); ?>" ><br><br>
+
+        <label for="sport">Sport :</label>
+        <input type="text" id="sport" name="sport" value="<?php echo htmlspecialchars($editGymData['Nom_du_sport']); ?>" ><br><br>
+
+        <label for="datedebut">Date de début :</label>
+        <input type="datetime-local" id="datedebut" name="datedebut" value="<?php echo htmlspecialchars($editGymData['Date_debut']); ?>" ><br><br>
+
+        <label for="datefin">Date de fin :</label>
+        <input type="datetime-local" id="datefin" name="datefin" value="<?php echo htmlspecialchars($editGymData['Date_fin']); ?>" ><br><br>
+
+        <label for="commentaire">Commentaire :</label>
+        <input type="text" id="commentaire" name="commentaire" value="<?php echo htmlspecialchars($editGymData['Commentaire']); ?>" ><br><br>
+
+        <input type="submit" value="Confirmer la réservation">
+    </form>
+<?php endif; ?>
     </div>
+
 </body>
 
 </html>

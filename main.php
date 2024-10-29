@@ -4,8 +4,12 @@ session_start();
 include 'db_connect.php';
 include 'Class/cConnected.php';
 include 'Class/cReservation.php';
+include 'Class/cGymnase.php';
+include 'Class/cSport.php';
 $connect = new cConnected($conn);
 $reserv = new cReservation($conn);
+$gym = new cGymnase($conn);
+$sport = new cSport($conn);
 
 $editGymData = null;
 $showEditModal = false;
@@ -22,65 +26,52 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($action == 'edit_gymnase') {
             $gymid = $_POST['gymid'];
 
-            $stmt = $conn->prepare("SELECT * FROM gymnase WHERE Id_Gymnase = ?");
-            $stmt->bind_param("i", $gymid);
-            $stmt->execute();
-            $result = $stmt->get_result();
+            
+
+            $result = $gym->GetOneGym($gymid);
             if ($result->num_rows > 0) {
                 $editGymData = $result->fetch_assoc();
                 $showEditModal = true;
             }
-            $stmt->close();
 
-            $stmt = $conn->prepare("SELECT * FROM sport");
-            $stmt->execute();
-            $result = $stmt->get_result();
+
+
+            $result = $sport->GetAllSport();
             while ($row = $result->fetch_assoc()) {
                 $allSports[] = $row;
             }
-            $stmt->close();
+           
 
 
-            $stmt = $conn->prepare("SELECT Id_Sport FROM gymnase_sport WHERE Id_Gymnase = ?");
-            $stmt->bind_param("i", $gymid);
-            $stmt->execute();
-            $result = $stmt->get_result();
+            
+            $result = $gym->GetOneGym_sport($gymid);
             while ($row = $result->fetch_assoc()) {
                 $associatedSports[] = $row['Id_Sport'];
             }
-            $stmt->close();
+
         } elseif ($action == 'parametre') {
-            $gymid = $_POST['paragymid'];
-            $gymname = $_POST['paranom'];
-            $latitude = $_POST['paralatitude'];
-            $longitude = $_POST['paralongitude'];
-            $adresse = $_POST['tbparaadresse'];
-            $ville = $_POST['paraville'];
-            $zip = $_POST['parazip'];
 
-            $stmt = $conn->prepare("UPDATE gymnase SET Nom = ?, Coordonnees_lattitude = ?, Coordonnees_longitude = ?, Adresse = ?, Ville = ?, Zip = ? WHERE Id_Gymnase = ?");
-            if ($stmt === false) {
-                die("Erreur de préparation de la requête : " . $conn->error);
-            }
+            $gymId = isset($_POST['paragymid']) ? (int) $_POST['paragymid'] : null;
+            $gymname = isset($_POST['paranom']) ? $_POST['paranom'] : null;
+            $latitude = isset($_POST['paralatitude']) ? (float) $_POST['paralatitude'] : null;
+            $longitude = isset($_POST['paralongitude']) ? (float) $_POST['paralongitude'] : null;
+            $adresse = isset($_POST['tbparaadresse']) ? $_POST['tbparaadresse'] : null;
+            $ville = isset($_POST['paraville']) ? $_POST['paraville'] : null;
+            $zip = isset($_POST['parazip']) ? (int) $_POST['parazip'] : null;
 
-            $stmt->bind_param("sddsssi", $gymname, $latitude, $longitude, $adresse, $ville, $zip, $gymid);
-
-            if ($stmt->execute()) {
-
-                $stmt = $conn->prepare("DELETE FROM gymnase_sport WHERE Id_Gymnase = ?");
-                $stmt->bind_param("i", $gymid);
-                $stmt->execute();
-                $stmt->close();
+            $result = $gym->UpdateParaGym($gymId, $gymname, $latitude, $longitude, $adresse, $ville, $zip);
 
 
+            if ($result) {
+
+                $gymId = isset($_POST['paragymid']) ? (int) $_POST['paragymid'] : null;
+                $gym->DelOneGym_sport($gymId);
                 if (isset($_POST['sports']) && is_array($_POST['sports'])) {
-                    $stmt = $conn->prepare("INSERT INTO gymnase_sport (Id_Gymnase, Id_Sport) VALUES (?, ?)");
                     foreach ($_POST['sports'] as $sport_id) {
-                        $stmt->bind_param("ii", $gymid, $sport_id);
-                        $stmt->execute();
+                        $gym->InsertGym_sport($gymId, $sport_id);
                     }
-                    $stmt->close();
                 }
+
 
                 echo "Le gymnase a bien été mis à jour !";
                 header("Location: main.php");
@@ -88,7 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
                 echo "Erreur lors de la mise à jour du gymnase : " . $stmt->error;
             }
-            $stmt->close();
+
+
         } elseif ($action == 'add_reservation') {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $gymId = isset($_POST['gymeid']) ? (int) $_POST['gymeid'] : null;
@@ -97,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $dateDebut = isset($_POST['datedebut']) ? $_POST['datedebut'] : null;
                 $dateFin = isset($_POST['datefin']) ? $_POST['datefin'] : null;
                 $commentaire = isset($_POST['commentaire']) ? $_POST['commentaire'] : '';
+
                 $reserv->addReservation($gymId, $userId, $sportId, $dateDebut, $dateFin, $commentaire);
             }
 
@@ -105,8 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-$sql = "SELECT Id_Gymnase, Nom, Coordonnees_lattitude, Coordonnees_longitude, Adresse, Ville, Zip FROM gymnase";
-$result = $conn->query($sql);
+$result = $gym->Getgym();
+
 
 $gymnases = [];
 
@@ -116,7 +109,7 @@ if ($result->num_rows > 0) {
         $gymnases[] = [
             'idgym' => $gymId,
             'name' => $row['Nom'],
-            'latitude' => $row['Coordonnees_lattitude'],
+            'latitude' => $row['Coordonnees_latitude'],
             'longitude' => $row['Coordonnees_longitude'],
             'address' => $row['Adresse'],
             'Ville' => $row['Ville'],
@@ -126,9 +119,8 @@ if ($result->num_rows > 0) {
     }
 }
 
-$sql = "SELECT Id_Gymnase, Id_Sport FROM gymnase_sport";
-$result = $conn->query($sql);
 
+$result = $gym->GetGym_sport();
 $gymnaseSports = [];
 
 if ($result->num_rows > 0) {
@@ -144,8 +136,8 @@ foreach ($gymnases as &$gymnase) {
     $gymnase['sports'] = isset($gymnaseSports[$gymId]) ? $gymnaseSports[$gymId] : [];
 }
 
-$sql = "SELECT Id_Sport, Nom_du_sport FROM sport";
-$result = $conn->query($sql);
+
+$result = $sport->GetSport();
 
 $sports = [];
 
@@ -227,7 +219,7 @@ $conn->close();
             <form method="POST" action="main.php">
                 <input type="hidden" name="action" value="add_sport">
                 <label for="sport_nom">Nom du Sport :</label>
-                <input type="text" id="tbsportname" name="sport_nom" required><br><br>
+                <input type="text"  id="tbsportname" name="sport_nom" required><br><br>
 
                 <label for="collectif">Sport Collectif :</label>
                 <input type="checkbox" id="cbCollectif" name="collectif"><br><br>
@@ -277,7 +269,7 @@ $conn->close();
                 <input type="text" id="tbparagymname" name="paranom" value="<?php echo isset($editGymData['Nom']) ? htmlspecialchars($editGymData['Nom']) : ''; ?>" required><br><br>
 
                 <label for="paralatitude">Latitude :</label>
-                <input type="number" id="tbparalatitude" name="paralatitude" step="0.000001" value="<?php echo isset($editGymData['Coordonnees_lattitude']) ? $editGymData['Coordonnees_lattitude'] : ''; ?>" required><br><br>
+                <input type="number" id="tbparalatitude" name="paralatitude" step="0.000001" value="<?php echo isset($editGymData['Coordonnees_latitude']) ? $editGymData['Coordonnees_latitude'] : ''; ?>" required><br><br>
 
                 <label for="paralongitude">Longitude :</label>
                 <input type="number" id="tbparalongitude" name="paralongitude" step="0.000001" value="<?php echo isset($editGymData['Coordonnees_longitude']) ? $editGymData['Coordonnees_longitude'] : ''; ?>" required><br><br>
@@ -373,13 +365,7 @@ $conn->close();
             }
         });
 
-
-        var closeResaModal = document.getElementById("closeResaModal");
-        closeResaModal.onclick = function() {
-            document.getElementById('resaModal').style.display = "none";
-        }
-
-
+        
 
         <?php if ($connect->isAdmin()): ?>
         
