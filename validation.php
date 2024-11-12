@@ -4,6 +4,8 @@ include 'db_connect.php';
 include 'Class/cConnected.php';
 include 'Class/cReservation.php';
 
+
+
 $connect = new cConnected($conn);
 $reserv = new cReservation($conn);
 
@@ -19,14 +21,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($action == 'resaedit') {
             $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
-            $editGymData = $reserv->getReservationDetails($resaid); 
-        
+            $editGymData = $reserv->getReservationDetails($resaid);
+            
 
         } elseif ($action == 'saveedit') {
 
             $valid = isset($_POST['ddlvalid']) ? (int) $_POST['ddlvalid'] : null;
             $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
-            $reserv->editReservation($valid,$resaid);
+            $reserv->editValidation($valid,$resaid);
 
             header("Location: " . $_SERVER['PHP_SELF']);
             exit();

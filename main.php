@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($action == 'edit_gymnase') {
             $gymid = $_POST['gymid'];
 
-            
+
 
             $result = $gym->GetOneGym($gymid);
             if ($result->num_rows > 0) {
@@ -40,10 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             while ($row = $result->fetch_assoc()) {
                 $allSports[] = $row;
             }
-           
 
 
-            
             $result = $gym->GetOneGym_sport($gymid);
             while ($row = $result->fetch_assoc()) {
                 $associatedSports[] = $row['Id_Sport'];
@@ -93,8 +91,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $reserv->addReservation($gymId, $userId, $sportId, $dateDebut, $dateFin, $commentaire);
             }
 
-            
+        } elseif ($action == 'add_sport') {
+            $name = isset($_POST['sport_nom']) ? $_POST['sport_nom'] : null;
+            $collec = isset($_SESSION['collectif']) ? $_SESSION['collectif'] : False;
+
+            $sport->AddSport($name, $collec);
         }
+
+        
+        
     }
 }
 
@@ -363,11 +368,21 @@ $conn->close();
 
                 document.getElementById('resaModal').style.display = "block";
             }
+            document.getElementById("closeResaModal").onclick = function() {
+                document.getElementById('resaModal').style.display = "none";
+            }
+
+            window.addEventListener('click', function(event) {
+                if (event.target == document.getElementById('resaModal')) {
+                    document.getElementById('resaModal').style.display = "none";
+                }
+            });
         });
 
         
 
         <?php if ($connect->isAdmin()): ?>
+           
         
             var gymModal = document.getElementById("gymModal");
             var btnOpenGymModal = document.getElementById("btnOpengymModal");
@@ -405,6 +420,19 @@ $conn->close();
                 }
             });
         <?php endif; ?>
+       var paraModal = document.getElementById("paraModal");
+var closeParaModal = document.getElementById("closeparaModal");
+
+closeParaModal.onclick = function() {
+    paraModal.style.display = "none";
+}
+
+window.addEventListener('click', function(event) {
+    if (event.target == paraModal) {
+        paraModal.style.display = "none";
+    }
+});
+
 
     </script>
 </body>

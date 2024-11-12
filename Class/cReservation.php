@@ -56,7 +56,7 @@ class cReservation
     public function getReservationDetails($reservationId)
     {
         $editGymData = null;
-        $stmt = $this->conn->prepare("SELECT r.Date_debut, r.Date_fin, r.Commentaire, g.Nom, s.Nom_du_sport FROM reservation r JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase JOIN sport s ON s.Id_Sport = r.Id_Sport WHERE Id_reservation = ?");
+        $stmt = $this->conn->prepare("SELECT r.Date_debut, r.Date_fin, r.Commentaire, g.Id_Gymnase, s.Nom_du_sport, s.Id_Sport FROM reservation r JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase JOIN sport s ON s.Id_Sport = r.Id_Sport WHERE Id_reservation = ?");
         $stmt->bind_param("i", $reservationId);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -67,7 +67,7 @@ class cReservation
         return $editGymData;
     }
 
-    public function editReservation($valid, $resaid)
+    public function editValidation($valid, $resaid)
     {
         $stmt = $this->conn->prepare("UPDATE reservation SET statut = ? WHERE Id_reservation = ?");
         $stmt->bind_param("ii", $valid, $resaid);
@@ -82,6 +82,29 @@ class cReservation
         $stmt->execute();
         $stmt->close();
     }
+
+
+    public function editReservation( $userId, $sportId, $dateDebut, $dateFin, $commentaire, $gymId)
+    {
+        $statut = 1;
+        $stmt = $this->conn->prepare("update reservation set , Id_Utilisateur, Id_Sport, Date_debut, Date_fin, Commentaire, statut where Id_reservation = ?");
+        $stmt->bind_param("iiisssi", $userId, $sportId, $dateDebut, $dateFin, $commentaire, $statut, $gymId);
+
+        if ($stmt->execute()) {
+            return "La réservation a bien été ajoutée à la liste d'attente !";
+        } else {
+            return "Erreur lors de l'ajout de la réservation : " . $stmt->error;
+        }
+    }
+
+    public function deleteReservation($resaid)
+    {
+        $stmt = $this->conn->prepare("delete from reservation where Id_reservation = ?;");
+        $stmt->bind_param("i", $resaid);
+        $stmt->execute();
+        $stmt->close();
+    }
+
 }
 
 ?>

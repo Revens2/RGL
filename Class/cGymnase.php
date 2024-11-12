@@ -1,11 +1,14 @@
 <?php
+include 'db_connect.php';
+
+
 
 class cGymnase
 {
     private $conn;
     private $db;
 
-
+   
 
     public function __construct($dbConnection)
     {
@@ -51,14 +54,14 @@ class cGymnase
     }
     public function UpdateParaGym($gymid, $gymname, $latitude, $longitude, $adresse, $ville, $zip)
     {
-        // Corrected column name and added backticks
+
         $stmt = $this->conn->prepare("UPDATE `gymnase` SET `Nom` = ?, `Coordonnees_latitude` = ?, `Coordonnees_longitude` = ?, `Adresse` = ?, `Ville` = ?, `Zip` = ? WHERE `Id_Gymnase` = ?");
         if (!$stmt) {
             echo "Prepare failed: (" . $this->conn->errno . ") " . $this->conn->error;
             return false;
         }
 
-        // Corrected data type for Zip if necessary
+
         $stmt->bind_param("sddsssi", $gymname, $latitude, $longitude, $adresse, $ville, $zip, $gymid);
 
         if (!$stmt->execute()) {
@@ -84,6 +87,30 @@ class cGymnase
 
         return $stmt->execute();
     }
+
+    public function getddlgym($selectedGymId)
+    {
+
+
+        if ($selectedGymId === null) {
+            $selectedGymId = 0;
+        }
+
+        $gymList = [];
+        $result = $this->conn->query("SELECT Id_Gymnase, Nom FROM gymnase");
+        while ($row = $result->fetch_assoc()) {
+            $gymList[] = $row;
+        }
+        $dropdown = '<select id="gymSelect" name="gym_id">';
+        foreach ($gymList as $gymItem) {
+            $selected = ($gymItem['Id_Gymnase'] == $selectedGymId) ? 'selected' : '';
+            $dropdown .= '<option value="' . $gymItem['Id_Gymnase'] . '" ' . $selected . '>' . htmlspecialchars($gymItem['Nom']) . '</option>';
+        }
+        $dropdown .= '</select>';
+        return $dropdown;
+
+    }
+
 
 
 }

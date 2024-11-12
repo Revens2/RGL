@@ -5,3 +5,6 @@ A faire plutard :
 - renommer tout le front pour avoir tb…
 -mettre a jour le mcd 
 - mettre des com de debile
+-changer icone blanc
+- faire le formatage des champs
+-factorisé les classes
