@@ -14,7 +14,7 @@ class cConnected
         $this->conn = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
 
         if ($this->conn->connect_error) {
-            die("La connexion a échoué : " . $this->conn->connect_error);
+            die("La connexion a ï¿½chouï¿½ : " . $this->conn->connect_error);
         }
 
         $this->db = $this->conn; 
@@ -48,7 +48,7 @@ class cConnected
                 return false;
             }
         } else {
-            die("Erreur lors de la préparation de la requête : " . $this->db->error);
+            die("Erreur lors de la prï¿½paration de la requï¿½te : " . $this->db->error);
         }
     }
 
@@ -69,7 +69,7 @@ class cConnected
                 $result = $query->get_result()->fetch_assoc();
                 return $result['isAdmin'] == 1;
             } else {
-                die("Erreur lors de la préparation de la requête : " . $this->db->error);
+                die("Erreur lors de la prï¿½paration de la requï¿½te : " . $this->db->error);
             }
         }
         return false;

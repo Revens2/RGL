@@ -19,9 +19,9 @@ class cReservation
         $stmt->bind_param("iiisssi", $gymId, $userId, $sportId, $dateDebut, $dateFin, $commentaire, $statut);
 
         if ($stmt->execute()) {
-            return "La réservation a bien été ajoutée à la liste d'attente !";
+            return "La rï¿½servation a bien ï¿½tï¿½ ajoutï¿½e ï¿½ la liste d'attente !";
         } else {
-            return "Erreur lors de l'ajout de la réservation : " . $stmt->error;
+            return "Erreur lors de l'ajout de la rï¿½servation : " . $stmt->error;
         }
     }
 
@@ -84,16 +84,16 @@ class cReservation
     }
 
 
-    public function editReservation( $userId, $sportId, $dateDebut, $dateFin, $commentaire, $gymId)
+    public function editReservation( $userId, $gymId, $sportId, $dateDebut, $dateFin, $commentaire)
     {
         $statut = 1;
-        $stmt = $this->conn->prepare("update reservation set , Id_Utilisateur, Id_Sport, Date_debut, Date_fin, Commentaire, statut where Id_reservation = ?");
-        $stmt->bind_param("iiisssi", $userId, $sportId, $dateDebut, $dateFin, $commentaire, $statut, $gymId);
+        $stmt = $this->conn->prepare("update reservation set  `Id_Utilisateur` = ?, `Id_Sport`= ?, `Date_debut`= ?, `Date_fin` = ?, `Commentaire` = ?, `statut` = ? where Id_reservation = ?");
+        $stmt->bind_param("iiisssi", $userId, $gymId, $sportId, $dateDebut, $dateFin, $commentaire, $statut);
 
         if ($stmt->execute()) {
-            return "La réservation a bien été ajoutée à la liste d'attente !";
+            return "La rï¿½servation a bien ï¿½tï¿½ ajoutï¿½e ï¿½ la liste d'attente !";
         } else {
-            return "Erreur lors de l'ajout de la réservation : " . $stmt->error;
+            return "Erreur lors de l'ajout de la rï¿½servation : " . $stmt->error;
         }
     }
 

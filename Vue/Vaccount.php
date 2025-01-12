@@ -1,21 +1,14 @@
 <?php
-session_start();
-include 'db_connect.php';
-include 'Class/cConnected.php';
-$connect = new cConnected($conn);
-
-
-$userData = $connect->account();
+include '../Controleur/Caccount.php';
 
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <title>Mon Compte</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
     <style>
         .account-container {
             max-width: 600px;
@@ -67,13 +60,12 @@ $userData = $connect->account();
 </head>
 
 <body>
-    <?php include 'menu.php'; ?>
+<?php include '../Vue/menu.php'; ?>
     <div class="account-container">
         <h2>Mon Compte</h2>
-        <form method="POST" action="update_account.php">
+        <form method="POST" action="../Controleur/traitement_inscription.php">
             <label for="nom">Nom :</label>
-            <input type="text" id="nom" name="nom" value="<?php echo isset($userData['Nom']) ? $userData['Nom'] : ''; ?>" required>
-
+            <input type="text" id="nom" name="nom" value="<?= htmlspecialchars($userData['Nom'] ?? '') ?>" required>
             <label for="prenom">Prénom :</label>
             <input type="text" id="prenom" name="prenom" value="<?php echo isset($userData['Prenom']) ? $userData['Prenom'] : ''; ?>" required>
 
@@ -101,7 +93,3 @@ $userData = $connect->account();
 </body>
 
 </html>
-
-<?php
-$conn->close();
-?>

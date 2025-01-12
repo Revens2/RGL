@@ -1,64 +1,12 @@
-<?php
-session_start();
-include 'db_connect.php';
-include 'Class/cConnected.php';
-include 'Class/cReservation.php';
-
-
-
-$connect = new cConnected($conn);
-$reserv = new cReservation($conn);
-
-$result = $reserv->getUserValidation();
-
-
-$editGymData = null;
-
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['action'])) {
-        $action = $_POST['action'];
-
-        if ($action == 'resaedit') {
-            $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
-            $editGymData = $reserv->getReservationDetails($resaid);
-            
-
-        } elseif ($action == 'saveedit') {
-
-            $valid = isset($_POST['ddlvalid']) ? (int) $_POST['ddlvalid'] : null;
-            $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
-            $reserv->editValidation($valid,$resaid);
-
-            header("Location: " . $_SERVER['PHP_SELF']);
-            exit();
-
-        
-        } elseif ($action == 'delete') {
-
-            
-            $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
-            $reserv->cancelReservation($resaid);
-
-            header("Location: " . $_SERVER['PHP_SELF']);
-            exit();
-
-        }
-
-        
-    }
-}
-
-
+<?php include '../Controleur/validation.php';
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <title>Gestion des Projets</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
         <style>
         .modal {
             display: flex;
@@ -127,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
-    <?php include 'menu.php'; ?>
+<?php include '../Vue/menu.php'; ?>
     <div class="container">
         <h1>Liste des Validations </h1>
 
@@ -152,12 +100,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <td><?php echo htmlspecialchars($row['Date_debut']); ?></td>
                 <td><?php echo htmlspecialchars($row['Date_fin']); ?></td>
                 <td>
-                    <form method="POST" action="validation.php" style="display:inline;">
+                    <form method="POST" action="../Controleur/validation.php" style="display:inline;">
                         <input type="hidden" name="action" value="resaedit">
                         <input type="hidden" name="Id_reservation" value="<?php echo $row['Id_reservation']; ?>">
                         <input type="submit" class="btn btn-edit" value="Modifier">
                     </form>
-                    <form method="POST" action="validation.php" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');" style="display:inline;">
+                    <form method="POST" action="../Controleur/validation.php" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');" style="display:inline;">
                         <input type="hidden" name="action" value="delete">
                         <input type="hidden" name="Id_reservation" value="<?php echo $row['Id_reservation']; ?>">
                         <input type="submit" class="btn btn-delete" value="Supprimer">
@@ -169,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
       <?php if ($editGymData): ?>
     <h2>Modifier la Réservation</h2>
-    <form method="POST" action="validation.php">
+    <form method="POST" action="../Controleur/validation.php">
         <input type="hidden" name="action" value="saveedit">
         <input type="hidden" name="Id_reservation" value="<?php echo htmlspecialchars($resaid); ?>">
         <label for="ddlvalid">Validation :</label>

@@ -1,5 +1,5 @@
 <?php
-include 'db_connect.php';
+include '../db_connect.php';
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt = $conn->prepare("INSERT INTO `Utilisateur` (`Nom`, `Prenom`, `Date_de_naissance`, `Numero_de_telephone`, `Adresse`, `isClient`, `isAdmin`, `Email`, `Ville`, `Zip`, `Mot_de_Passe`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     if ($stmt === false) {
-        die('Erreur dans la préparation de la requête : ' . $conn->error);
+        die('Erreur dans la prï¿½paration de la requï¿½te : ' . $conn->error);
     }
 
     $client = "1";
