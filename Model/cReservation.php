@@ -104,7 +104,20 @@ class cReservation
         $stmt->execute();
         $stmt->close();
     }
-
+    public function GetValidReservation($resaid)
+    {
+        //$resaid = 17;
+        $editGymData = null;
+        $stmt = $this->conn->prepare("SELECT r.Date_debut, r.Date_fin, r.statut, r.Commentaire, g.Nom, s.Nom_du_sport FROM reservation r JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase JOIN sport s ON s.Id_Sport = r.Id_Sport WHERE Id_reservation = ?");
+        $stmt->bind_param("i", $resaid);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            $editGymData = $result->fetch_assoc();
+        }
+        $stmt->close();
+        return $editGymData;
+    }
 }
 
 ?>

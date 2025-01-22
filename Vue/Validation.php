@@ -1,4 +1,7 @@
 <?php include '../Controleur/validation.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -75,7 +78,7 @@
 </head>
 
 <body>
-<?php include '../Vue/menu.php'; ?>
+ <?php include 'menu.php'; ?>
     <div class="container">
         <h1>Liste des Validations </h1>
 
@@ -100,12 +103,12 @@
                 <td><?php echo htmlspecialchars($row['Date_debut']); ?></td>
                 <td><?php echo htmlspecialchars($row['Date_fin']); ?></td>
                 <td>
-                    <form method="POST" action="../Controleur/validation.php" style="display:inline;">
+                    <form method="POST" action="validation.php" style="display:inline;">
                         <input type="hidden" name="action" value="resaedit">
                         <input type="hidden" name="Id_reservation" value="<?php echo $row['Id_reservation']; ?>">
                         <input type="submit" class="btn btn-edit" value="Modifier">
                     </form>
-                    <form method="POST" action="../Controleur/validation.php" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');" style="display:inline;">
+                    <form method="POST" action="validation.php" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');" style="display:inline;">
                         <input type="hidden" name="action" value="delete">
                         <input type="hidden" name="Id_reservation" value="<?php echo $row['Id_reservation']; ?>">
                         <input type="submit" class="btn btn-delete" value="Supprimer">
@@ -115,39 +118,78 @@
             <?php endwhile; ?>
         </table>
 
-      <?php if ($editGymData): ?>
-    <h2>Modifier la Réservation</h2>
-    <form method="POST" action="../Controleur/validation.php">
-        <input type="hidden" name="action" value="saveedit">
-        <input type="hidden" name="Id_reservation" value="<?php echo htmlspecialchars($resaid); ?>">
-        <label for="ddlvalid">Validation :</label>
+
         
-        <select id="ddlvalid" name="ddlvalid">
-            <option value="2" <?php echo ($editGymData['statut'] == 2) ? 'selected' : ''; ?>>Valider</option>
-            <option value="3" <?php echo ($editGymData['statut'] == 3) ? 'selected' : ''; ?>>En attente</option>
-            <option value="4" <?php echo ($editGymData['statut'] == 4) ? 'selected' : ''; ?>>Refuser</option>
-        </select>
+    <?php if (!empty($editGymData)): ?>
+     
+          <span class="close">&times;</span>
+          <h2>Modifier la Réservation</h2>
+          <form method="POST" action="validation.php">
+            <input type="hidden" name="action" value="saveedit">
+            <input type="hidden" name="Id_reservation" value="<?= htmlspecialchars($resaid) ?>">
 
-        <label for="gymNameField">Gymnase :</label>
-        <input type="text" id="gymNameField" name="gymname" value="<?php echo htmlspecialchars($editGymData['Nom']); ?>" readonly><br><br>
+            <label for="ddlvalid">Validation :</label>
+            <select id="ddlvalid" name="ddlvalid">
+              <option value="1" <?= ($editGymData['statut'] == 1) ? 'selected' : ''; ?>>
+                Nouvelle réservation
+              </option>
+              <option value="2" <?= ($editGymData['statut'] == 2) ? 'selected' : ''; ?>>
+                Valider
+              </option>
+              <option value="3" <?= ($editGymData['statut'] == 3) ? 'selected' : ''; ?>>
+                En attente d'action
+              </option>
+              <option value="4" <?= ($editGymData['statut'] == 4) ? 'selected' : ''; ?>>
+                Refuser
+              </option>
+            </select>
 
-        <label for="sport">Sport :</label>
-        <input type="text" id="sport" name="sport" value="<?php echo htmlspecialchars($editGymData['Nom_du_sport']); ?>" readonly><br><br>
+            <label for="gymNameField">Gymnase :</label>
+            <input 
+              type="text" 
+              id="gymNameField" 
+              name="gymname" 
+              value="<?= htmlspecialchars($editGymData['Nom'] ?? '') ?>"
+            ><br><br>
 
-        <label for="datedebut">Date de début :</label>
-        <input type="datetime-local" id="datedebut" name="datedebut" value="<?php echo htmlspecialchars($editGymData['Date_debut']); ?>" readonly><br><br>
+            <label for="sport">Sport :</label>
+            <input 
+              type="text" 
+              id="sport" 
+              name="sport" 
+              value="<?= htmlspecialchars($editGymData['Nom_du_sport'] ?? '') ?>"
+            ><br><br>
 
-        <label for="datefin">Date de fin :</label>
-        <input type="datetime-local" id="datefin" name="datefin" value="<?php echo htmlspecialchars($editGymData['Date_fin']); ?>" readonly><br><br>
+            <label for="datedebut">Date de début :</label>
+            <input 
+              type="datetime-local" 
+              id="datedebut" 
+              name="datedebut"
+              value="<?= htmlspecialchars($editGymData['Date_debut'] ?? '') ?>"
+            ><br><br>
 
-        <label for="commentaire">Commentaire :</label>
-        <input type="text" id="commentaire" name="commentaire" value="<?php echo htmlspecialchars($editGymData['Commentaire']); ?>" readonly><br><br>
+            <label for="datefin">Date de fin :</label>
+            <input 
+              type="datetime-local" 
+              id="datefin" 
+              name="datefin"
+              value="<?= htmlspecialchars($editGymData['Date_fin'] ?? '') ?>"
+            ><br><br>
 
-        <input type="submit" value="Confirmer la réservation">
-    </form>
-<?php endif; ?>
+            <label for="commentaire">Commentaire :</label>
+            <input 
+              type="text" 
+              id="commentaire" 
+              name="commentaire"
+              value="<?= htmlspecialchars($editGymData['Commentaire'] ?? '') ?>"
+            ><br><br>
 
-    </div>
+            <input type="submit" value="Confirmer la réservation">
+          </form>
+        </div>
+     
+    <?php endif; ?>
+  
 </body>
 
 </html>
