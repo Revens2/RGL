@@ -20,7 +20,7 @@
                 <th>Gymnase</th>
                 <th>Date de Début</th>
                 <th>Date de Fin</th>
-                <th>Actions</th>
+                <th style="width: 228px;">Actions</th>
             </tr>
             <?php foreach ($reservations as $row): ?>
                 <tr>
@@ -30,15 +30,15 @@
                     <td><?= htmlspecialchars($row['Date_debut']); ?></td>
                     <td><?= htmlspecialchars($row['Date_fin']); ?></td>
                     <td>
-                        <form method="POST" action="reservation.php">
+                        <form method="POST" action="reservation.php"  style="display:inline;">
                             <input type="hidden" name="action" value="openresaedit">
                             <input type="hidden" name="Id_reservation" value="<?= $row['Id_reservation']; ?>">
-                            <button  style="background : green;" type="submit">Modifier</button>
+                            <input type="submit" class="btn btn-edit" style="width : 101px;"   value="Modifier">
                         </form>
-                        <form method="POST" action="reservation.php" onsubmit="return confirm('Confirmer la suppression ?');">
+                        <form method="POST" action="reservation.php" onsubmit="return confirm('Confirmer la suppression ?');"  style="display:inline;">
                             <input type="hidden" name="action" value="supp">
                             <input type="hidden" name="Id_reservation" value="<?= $row['Id_reservation']; ?>">
-                            <button style="background : red;" type="submit">Supprimer</button>
+                            <input type="submit" class="btn btn-delete" value="Supprimer">
                         </form>
                     </td>
                 </tr>

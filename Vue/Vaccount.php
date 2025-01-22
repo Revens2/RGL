@@ -7,56 +7,12 @@ include '../Controleur/Caccount.php';
     <meta charset="UTF-8">
     <title>Mon Compte</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .account-container {
-            max-width: 600px;
-            margin: 50px auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .account-container h2 {
-            text-align: center;
-            color: #333;
-        }
-        .account-container label {
-            font-weight: bold;
-            margin-top: 10px;
-            display: block;
-        }
-        .account-container input[type="text"],
-        .account-container input[type="email"],
-        .account-container input[type="tel"],
-        .account-container input[type="date"] {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .account-container input[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            display: block;
-            margin: 0 auto;
-        }
-        .account-container input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-    </style>
 </head>
 <body>
     <?php include '../Vue/menu.php'; ?>
 
     <div class="account-container">
         <h2>Mon Compte</h2>
-
         <form method="POST" action="../Controleur/traitement_inscription.php">
             <!-- CHAMP NOM -->
             <label for="nom">Nom :</label>
@@ -89,7 +45,6 @@ include '../Controleur/Caccount.php';
                 id="date_naissance"
                 name="date_naissance"
                 value="<?= htmlspecialchars($userData['Date_de_naissance'] ?? '') ?>"
-
             >
 
             <!-- TÉLÉPHONE -->
@@ -99,7 +54,6 @@ include '../Controleur/Caccount.php';
                 id="telephone"
                 name="telephone"
                 value="<?= htmlspecialchars($userData['Numero_de_telephone'] ?? '') ?>"
-           
                 pattern="^\+?[0-9]{10,14}$"
                 title="10 à 14 chiffres (optionnellement précédés d’un +)."
             >

@@ -352,3 +352,53 @@ footer {
     cursor: pointer;
     border-radius: 5px;
 }
+
+account-container {
+    max-width: 600px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.account-container h2 {
+    text-align: center;
+    color: #333;
+}
+
+.account-container label {
+    font-weight: bold;
+    margin-top: 10px;
+    display: block;
+}
+
+/* Champs de saisie */
+.account-container input[type="text"],
+.account-container input[type="email"],
+.account-container input[type="tel"],
+.account-container input[type="date"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Bouton de soumission */
+.account-container input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;
+}
+
+    /* Effet au survol du bouton */
+    .account-container input[type="submit"]:hover {
+        background-color: #45a049;
+    }

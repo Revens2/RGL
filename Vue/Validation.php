@@ -1,4 +1,5 @@
 <?php include '../Controleur/validation.php';
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -10,75 +11,11 @@ error_reporting(E_ALL);
     <meta charset="UTF-8">
     <title>Gestion des Projets</title>
     <link rel="stylesheet" href="../css/style.css">
-        <style>
-        .modal {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-        }
-
-        .modal-content {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 400px;
-            max-width: 90%;
-        }
-
-        .close {
-            color: #333;
-            float: right;
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        .modal-content h2 {
-            margin-top: 0;
-            font-size: 24px;
-            color: #333;
-        }
-
-        .modal-content form label {
-            font-weight: bold;
-            margin-top: 10px;
-            display: block;
-        }
-
-        .modal-content form input[type="text"],
-        .modal-content form input[type="datetime-local"] {
-            width: calc(100% - 20px);
-            padding: 8px;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        .modal-content form input[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .modal-content form input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-    </style>
+       
 </head>
 
 <body>
- <?php include 'menu.php'; ?>
+ <?php include '../Vue/menu.php'; ?>
     <div class="container">
         <h1>Liste des Validations </h1>
 
@@ -91,7 +28,7 @@ error_reporting(E_ALL);
                 <th>Gymnase</th>
                 <th>Date de Début</th>
                 <th>Date de Fin</th>
-                <th>Actions</th>
+                <th style="width: 228px;">Actions</th>
             </tr>
             <?php while ($row = $result->fetch_assoc()): ?>
             <tr>
@@ -106,7 +43,7 @@ error_reporting(E_ALL);
                     <form method="POST" action="validation.php" style="display:inline;">
                         <input type="hidden" name="action" value="resaedit">
                         <input type="hidden" name="Id_reservation" value="<?php echo $row['Id_reservation']; ?>">
-                        <input type="submit" class="btn btn-edit" value="Modifier">
+                        <input type="submit" class="btn btn-edit" style="width : 101px;"   value="Modifier">
                     </form>
                     <form method="POST" action="validation.php" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');" style="display:inline;">
                         <input type="hidden" name="action" value="delete">
