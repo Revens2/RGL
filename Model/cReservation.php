@@ -52,6 +52,20 @@ class cReservation
         return $result;
     }
 
+    public function getUserHistorique(int $userId)
+    {
+        $stmt = $this->conn->prepare("SELECT r.Id_reservation, r.Date_debut, r.Date_fin, s.Nom_du_sport, g.nom FROM reservation r JOIN sport s ON s.Id_Sport = r.Id_Sport JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase WHERE Id_Utilisateur = ? and isdelete = 1");
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $historique = [];
+        while ($row = $result->fetch_assoc()) {
+            $historique[] = $row;
+        }
+
+        return $historique;
+    }
 
     public function getReservationDetails($reservationId)
     {

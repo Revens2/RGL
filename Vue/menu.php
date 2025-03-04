@@ -27,6 +27,11 @@
             </li>
          <?php endif; ?>
             <li>
+                <a href="../Vue/historique.php">
+                    <img src="../icons/historical.png" alt="Validation">
+                </a>
+            </li>
+            <li>
                 <a href="../Vue/Vaccount.php">
                     <img src="../icons/user.png" alt="Account">
                 </a>
