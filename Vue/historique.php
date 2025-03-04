@@ -17,6 +17,7 @@
             <tr>
                 <th>Sport</th>
                 <th>Gymnase</th>
+                <th>Commentaire</th>
                 <th>Date de Début</th>
                 <th>Date de Fin</th>
             </tr>
@@ -24,9 +25,10 @@
                 <tr>
                     <td><?= htmlspecialchars($row['Nom_du_sport']); ?></td>
                     <td><?= htmlspecialchars($row['nom']); ?></td>
+                    <td><?= htmlspecialchars($row['Commentaire']); ?></td>
                     <td><?= htmlspecialchars($row['Date_debut']); ?></td>
                     <td><?= htmlspecialchars($row['Date_fin']); ?></td>
-                   
+                    
                 </tr>
             <?php endforeach; ?>
         </table>

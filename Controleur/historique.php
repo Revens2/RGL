@@ -15,5 +15,5 @@ $selectedSportId = null;
 
 
 $userid = isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : null;
-$historique = $reserv->getUserReservations($userid);
+$historique = $reserv->getUserHistorique($userid);
 ?>
