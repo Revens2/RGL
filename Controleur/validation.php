@@ -51,8 +51,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-$result = $reserv->getUserValidation();
+$dt = $reserv->getUserValidation();
 
+$finalRows = [];  
+while ($row = $dt->fetch_assoc()) {
+    if ($row['statut'] == 1) {
+        $row['statut'] = "../icons/termine.png";
+    }elseif ($row['statut'] == 2){
+        $row['statut'] = "../icons/accepte.png";
+    }elseif ($row['statut'] == 3){
+        $row['statut'] = "../icons/attente.png";
+    }elseif ($row['statut'] == 4){
+        $row['statut'] = "../icons/annule.png";
+    }
+    $finalRows[] = $row;  
+}
+
+return $finalRows;
 
 
 

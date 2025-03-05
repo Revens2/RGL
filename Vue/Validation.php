@@ -30,9 +30,9 @@ error_reporting(E_ALL);
                 <th>Date de Fin</th>
                 <th style="width: 228px;">Actions</th>
             </tr>
-            <?php while ($row = $result->fetch_assoc()): ?>
+            <?php foreach ($finalRows as $row): ?>
             <tr>
-                <td><?php echo htmlspecialchars($row['statut']); ?></td>
+                 <td><img src="<?= htmlspecialchars($row['statut']) ?>" alt="Icône de statut" /> </td>
                 <td><?php echo htmlspecialchars($row['Nom']); ?></td>
                 <td><?php echo htmlspecialchars($row['Prenom']); ?></td>
                 <td><?php echo htmlspecialchars($row['Nom_du_sport']); ?></td>
@@ -52,7 +52,7 @@ error_reporting(E_ALL);
                     </form>
                 </td>
             </tr>
-            <?php endwhile; ?>
+            <?php endforeach; ?>
         </table>
 
 
