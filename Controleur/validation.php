@@ -24,30 +24,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
             $onpopup = 1;
             $editGymData = $reserv->GetValidReservation($resaid);
-           
-           
+
+
         } elseif ($action == 'saveedit') {
 
             $valid = isset($_POST['ddlvalid']) ? (int) $_POST['ddlvalid'] : null;
             $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
-            $reserv->editValidation($valid,$resaid);
+            $reserv->editValidation($valid, $resaid);
 
             header("Location: " . $_SERVER['PHP_SELF']);
             exit();
 
-        
+
         } elseif ($action == 'delete') {
 
-            
+
             $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
             $reserv->cancelReservation($resaid);
 
             header("Location: " . $_SERVER['PHP_SELF']);
             exit();
 
-        }
+        } elseif ($action == 'closepopup') {
+            $editGymData = null;
 
-        
+            header("Location: ../Vue/validation.php");
+
+        }
     }
 }
 

@@ -317,6 +317,13 @@ footer {
         cursor: pointer;
     }
 
+.close2 {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    background: #ffffff;
+}
 /* Formulaire dans la modale */
 .modal-form {
     display: flex;

@@ -22,9 +22,9 @@
                 <th>Date de Fin</th>
                 <th style="width: 228px;">Actions</th>
             </tr>
-            <?php foreach ($reservations as $row): ?>
+            <?php foreach ($finalRows as $row): ?>
                 <tr>
-                    <td><?= htmlspecialchars($row['statut']); ?></td>
+                    <td><img src="<?= htmlspecialchars($row['statut']) ?>" alt="Icône de statut" /> </td>
                     <td><?= htmlspecialchars($row['Nom_du_sport']); ?></td>
                     <td><?= htmlspecialchars($row['nom']); ?></td>
                     <td><?= htmlspecialchars($row['Date_debut']); ?></td>
@@ -46,6 +46,12 @@
         </table>
 
         <?php if ($editGymData): ?>
+         <div id="paraModal" class="modal" style="display: block;">
+        <div class="modal-content">
+        <form method="POST" action="../Controleur/validation.php" style="float:right;">
+      <input type="hidden" name="action" value="closepopup">
+      <button type="submit" class="close2">&times;</button>
+    </form>
             <h2>Modifier la Réservation</h2>
             <form method="POST" action="reservation.php">
                 <input type="hidden" name="action" value="saveedit">
@@ -109,6 +115,9 @@
 
                 <input type="submit" name="saveedit" value="Confirmer la réservation">
             </form>
+            </div>
+      </div>
+    </div>
         <?php endif; ?>
     </div>
 </body>

@@ -32,12 +32,7 @@ class cReservation
         $stmt->execute();
         $result = $stmt->get_result();
 
-        $reservations = [];
-        while ($row = $result->fetch_assoc()) {
-            $reservations[] = $row;
-        }
-
-        return $reservations;
+        return $result;
     }
 
     public function getUserValidation()

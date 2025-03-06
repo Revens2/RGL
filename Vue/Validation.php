@@ -58,8 +58,13 @@ error_reporting(E_ALL);
 
         
     <?php if (!empty($editGymData)): ?>
-     
-          <span class="close">&times;</span>
+     <div id="paraModal" class="modal" style="display: block;">
+        <div class="modal-content">
+        <form method="POST" action="../Controleur/validation.php" style="float:right;">
+      <input type="hidden" name="action" value="closepopup">
+      <button type="submit" class="close2">&times;</button>
+    </form>
+
           <h2>Modifier la Réservation</h2>
           <form method="POST" action="validation.php">
             <input type="hidden" name="action" value="saveedit">
@@ -124,7 +129,8 @@ error_reporting(E_ALL);
             <input type="submit" value="Confirmer la réservation">
           </form>
         </div>
-     
+      </div>
+    </div>
     <?php endif; ?>
   
 </body>

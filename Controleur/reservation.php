@@ -40,6 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             header("Location: " . $_SERVER['PHP_SELF']);
             exit();
+        } elseif ($action == 'closepopup') {
+            $editGymData = null;
+
+            header("Location: ../Vue/reservation.php");
+
         }
     }
 } elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
@@ -49,5 +54,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 $userid = isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : null;
-$reservations = $reserv->getUserReservations($userid);
+
+
+$dt = $reserv->getUserReservations($userid);
+
+$finalRows = [];
+while ($row = $dt->fetch_assoc()) {
+    if ($row['statut'] == 1) {
+        $row['statut'] = "../icons/termine.png";
+    } elseif ($row['statut'] == 2) {
+        $row['statut'] = "../icons/accepte.png";
+    } elseif ($row['statut'] == 3) {
+        $row['statut'] = "../icons/attente.png";
+    } elseif ($row['statut'] == 4) {
+        $row['statut'] = "../icons/annule.png";
+    }
+    $finalRows[] = $row;
+}
+
+return $finalRows;
+
 ?>
