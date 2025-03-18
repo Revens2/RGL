@@ -6,7 +6,7 @@
 </head>
 <body>
     <footer>
-     <p>©2025 Réservation des Gymnases de Lorraine (RGL). Tous droits réservés. </p>
+     <p>Â©2025 RÃ©servation des Gymnases de Lorraine (RGL). Tous droits rÃ©servÃ©s. </p>
 </footer>
 </body>
 </html>
