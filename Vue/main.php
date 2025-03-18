@@ -14,6 +14,7 @@
 </head>
 <body>
     <?php include '../Vue/menu.php'; ?>
+     
 
     <div class="container">
         <h1>Localisation des Gymnases</h1>
@@ -446,5 +447,7 @@
             });
         <?php endif; ?>
     </script>
+
+       <?php require_once '../Vue/footer.php'; ?>
 </body>
 </html>

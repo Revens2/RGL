@@ -2,7 +2,6 @@
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-</head>
 <body>
 
     <nav>
@@ -28,7 +27,7 @@
          <?php endif; ?>
             <li>
                 <a href="../Vue/historique.php">
-                    <img src="../icons/historical.png" alt="Validation">
+                    <img src="../icons/historical.png" alt="Historique">
                 </a>
             </li>
             <li>
@@ -47,5 +46,4 @@
 
 </body>
 </html>
-<body>
 

@@ -35,5 +35,6 @@
 
     
     </div>
+    <?php include 'footer.hmtl'; ?>
 </body>
 </html>
