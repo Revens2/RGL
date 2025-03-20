@@ -9,14 +9,37 @@ class cConnected
     private $password = "root";
     private $dbname = "rgl";
 
+    private string $mail;
+    private string $mdp;
+    private int $userid;
+
+
+    private function getMail()
+    {
+        return $this->mail;
+    }
+
+    public function setMail($mail)
+    {
+        $this->mail = $mail;
+    }
+
+  
+    private function getMdp()
+    {
+        return $this->mdp;
+    }
+
+    public function setMdp($mdp)
+    {
+        $this->mdp = $mdp;
+    }
+
+
+
     public function __construct()
     {
         $this->conn = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
-
-        if ($this->conn->connect_error) {
-            die("La connexion a �chou� : " . $this->conn->connect_error);
-        }
-
         $this->db = $this->conn; 
     }
 
@@ -26,12 +49,12 @@ class cConnected
         return isset($_SESSION['user_id']);
     }
 
- public function login($email, $password)
+ public function login()
     {
         $query = $this->db->prepare("SELECT Id_Utilisateur, isClient, isAdmin FROM utilisateur WHERE Email = ? AND Mot_de_Passe = ?");
         if ($query) {
-            $hashed_password = md5($password);
-            $query->bind_param("ss", $email, $hashed_password);
+            $hashed_password = md5($this-> mdp);
+            $query->bind_param("ss", $this-> mail, $hashed_password);
             $query->execute();
             $query->store_result();
 
@@ -47,9 +70,7 @@ class cConnected
             } else {
                 return false;
             }
-        } else {
-            die("Erreur lors de la pr�paration de la requ�te : " . $this->db->error);
-        }
+        } 
     }
 
     public function closeConnection()
@@ -68,9 +89,7 @@ class cConnected
                 $query->execute();
                 $result = $query->get_result()->fetch_assoc();
                 return $result['isAdmin'] == 1;
-            } else {
-                die("Erreur lors de la pr�paration de la requ�te : " . $this->db->error);
-            }
+            } 
         }
         return false;
     }

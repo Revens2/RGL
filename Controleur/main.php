@@ -72,9 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 echo "Le gymnase a bien été mis à jour !";
                 header("Location: main.php");
                 exit();
-            } else {
-                echo "Erreur lors de la mise à jour du gymnase.";
-            }
+            } 
 
         } elseif ($action == 'add_reservation') {
             $gymId = isset($_POST['gymeid']) ? (int) $_POST['gymeid'] : null;
@@ -165,7 +163,5 @@ if ($result->num_rows > 0) {
 }
 
 $conn->close();
-
-// Inclure la vue
 include '../Vue/main.php';
 ?>
