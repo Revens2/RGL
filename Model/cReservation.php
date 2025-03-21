@@ -5,51 +5,29 @@ class cReservation
     private $conn;
     private $db;
 
-  
-
-    public function __construct($dbConnection)
+    public function __construct($cbbd)
     {
-        $this->conn = $dbConnection;
+        $this->conn = new cbdd();
     }
 
-    public function addReservation($gymId, $userId, $sportId, $dateDebut, $dateFin, $commentaire)
+    public function AjoutReservation ($gymId, $userId, $sportId, $dateDebut, $dateFin, $commentaire)
     {
-        $statut = 1;
-        $stmt = $this->conn->prepare("INSERT INTO reservation (Id_Gymnase, Id_Utilisateur, Id_Sport, Date_debut, Date_fin, Commentaire, statut) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("iiisssi", $gymId, $userId, $sportId, $dateDebut, $dateFin, $commentaire, $statut);
-
-        if ($stmt->execute()) {
-            return "La r�servation a bien �t� ajout�e � la liste d'attente !";
-        } else {
-            return "Erreur lors de l'ajout de la r�servation : " . $stmt->error;
-        }
+         return $this->conn->addReservation($gymId, $userId, $sportId, $dateDebut, $dateFin, $commentaire);
     }
 
-    public function getUserReservations(int $userId)
+    public function getUserReservations($userId)
     {
-        $stmt = $this->conn->prepare("SELECT r.Id_reservation, r.Date_debut, r.Date_fin, s.Nom_du_sport, r.statut, g.nom FROM reservation r JOIN sport s ON s.Id_Sport = r.Id_Sport JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase WHERE Id_Utilisateur = ? and r.statut > 0");
-        $stmt->bind_param("i", $userId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        return $result;
+        return $this->conn->SelectUserReservations($userId);
     }
 
     public function getUserValidation()
     {
-        $stmt = $this->conn->prepare("SELECT r.Id_reservation, r.Date_debut, r.Date_fin, s.Nom_du_sport, r.statut, g.nom, u.Nom, u.Prenom FROM reservation r JOIN sport s ON s.Id_Sport = r.Id_Sport JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase JOIN utilisateur u ON u.Id_Utilisateur = r.Id_Utilisateur where r.statut > 0");
-        $stmt->execute();
-        $result = $stmt->get_result();
-        return $result;
+        return $this->conn->SelectUserValidation();
     }
 
-    public function getUserHistorique(int $userId)
+    public function getUserHistorique($userId)
     {
-        $stmt = $this->conn->prepare("SELECT r.Id_reservation, r.Date_debut, r.Date_fin, s.Nom_du_sport, g.nom, r.Commentaire FROM reservation r JOIN sport s ON s.Id_Sport = r.Id_Sport JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase WHERE Id_Utilisateur = ? and statut = 0");
-        $stmt->bind_param("i", $userId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
+        $result = $this->conn->SelectUserHistorique($userId);
         $historique = [];
         while ($row = $result->fetch_assoc()) {
             $historique[] = $row;
@@ -61,66 +39,41 @@ class cReservation
     public function getReservationDetails($reservationId)
     {
         $editGymData = null;
-        $stmt = $this->conn->prepare("SELECT r.Date_debut, r.Date_fin, r.Commentaire, g.Id_Gymnase, s.Nom_du_sport, s.Id_Sport FROM reservation r JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase JOIN sport s ON s.Id_Sport = r.Id_Sport WHERE Id_reservation = ?");
-        $stmt->bind_param("i", $reservationId);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $result = $this->conn->SelectReservationDetails($reservationId);
         if ($result->num_rows > 0) {
             $editGymData = $result->fetch_assoc();
         }
-        $stmt->close();
         return $editGymData;
     }
 
     public function editValidation($valid, $resaid)
     {
-        $stmt = $this->conn->prepare("UPDATE reservation SET statut = ? WHERE Id_reservation = ?");
-        $stmt->bind_param("ii", $valid, $resaid);
-        $stmt->execute();
-        $stmt->close();
+        $this->conn->UpdateValidation($valid, $resaid);
     }
 
     public function cancelReservation($resaid)
     {
-        $stmt = $this->conn->prepare("UPDATE reservation SET statut = 0 WHERE Id_reservation = ?");
-        $stmt->bind_param("i", $resaid);
-        $stmt->execute();
-        $stmt->close();
+        $this->conn->EndReservation($resaid);
     }
 
 
-    public function editReservation( $userId, $gymId, $sportId, $dateDebut, $dateFin, $commentaire)
+    public function editReservation( $userId, $resaid, $sportId, $dateDebut, $dateFin, $commentaire)
     {
-        $statut = 1;
-        $stmt = $this->conn->prepare("update reservation set  `Id_Utilisateur` = ?, `Id_Sport`= ?, `Date_debut`= ?, `Date_fin` = ?, `Commentaire` = ?, `statut` = ? where Id_reservation = ?");
-        $stmt->bind_param("iiisssi", $userId, $gymId, $sportId, $dateDebut, $dateFin, $commentaire, $statut);
-
-        if ($stmt->execute()) {
-            return "La r�servation a bien �t� ajout�e � la liste d'attente !";
-        } else {
-            return "Erreur lors de l'ajout de la r�servation : " . $stmt->error;
-        }
+        $this->conn->UpdateReservation($resaid);
     }
 
-    public function deleteReservation($resaid)
+    public function SuppReservation($resaid)
     {
-        $stmt = $this->conn->prepare("delete from reservation where Id_reservation = ?;");
-        $stmt->bind_param("i", $resaid);
-        $stmt->execute();
-        $stmt->close();
+        $this->conn->DeleteReservation($resaid);
     }
     public function GetValidReservation($resaid)
     {
         //$resaid = 17;
         $editGymData = null;
-        $stmt = $this->conn->prepare("SELECT r.Date_debut, r.Date_fin, r.statut, r.Commentaire, g.Nom, s.Nom_du_sport FROM reservation r JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase JOIN sport s ON s.Id_Sport = r.Id_Sport WHERE Id_reservation = ?");
-        $stmt->bind_param("i", $resaid);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $result = $this->conn->SelectValidReservation($resaid);
         if ($result->num_rows > 0) {
             $editGymData = $result->fetch_assoc();
         }
-        $stmt->close();
         return $editGymData;
     }
 }

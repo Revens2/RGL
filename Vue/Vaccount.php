@@ -1,5 +1,5 @@
 <?php
-include '../Controleur/Caccount.php';
+require '../Controleur/Caccount.php';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -7,13 +7,14 @@ include '../Controleur/Caccount.php';
     <meta charset="UTF-8">
     <title>Mon Compte</title>
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
 </head>
 <body>
     <?php include '../Vue/menu.php'; ?>
 
     <div class="account-container">
         <h2>Mon Compte</h2>
-        <form method="POST" action="../Controleur/traitement_inscription.php">
+        <form method="POST" action="../Controleur/Caccount.php">
             <!-- CHAMP NOM -->
             <label for="nom">Nom :</label>
             <input

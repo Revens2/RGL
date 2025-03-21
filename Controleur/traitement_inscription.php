@@ -1,38 +1,28 @@
 <?php
-include '../db_connect.php';
+require_once '../Model/cbdd.php';
+include '../Model/cUtilisateur.php';
+$connect = new cUtilisateur();
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nom = $_POST['name'];
-    $prenom = $_POST['prenom'];
-    $birth = $_POST['birth'];
-    $tel = $_POST['tel'];
-    $adress = $_POST['adresse'];
-    $ville = $_POST['Ville'];
-    $zip = $_POST['zip'];
-    $email = $_POST['email'];
-    $mdp = $_POST['mdp'];
-    $hashed = md5($mdp);
+    $connect->setNom($_POST['name']);
+    $connect->setPrenom($_POST['prenom']);
+    $connect->setBirth($_POST['birth']);
+    $connect->setTel($_POST['tel']);
+    $connect->setAdresse($_POST['adresse']);
+    $connect->setVille($_POST['Ville']);
+    $connect->setZip($_POST['zip']);
+    $connect->setMail($_POST['email']);
+    $connect->setMdp($_POST['mdp']);
 
-    $stmt = $conn->prepare("INSERT INTO `Utilisateur` (`Nom`, `Prenom`, `Date_de_naissance`, `Numero_de_telephone`, `Adresse`, `isClient`, `isAdmin`, `Email`, `Ville`, `Zip`, `Mot_de_Passe`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-    if ($stmt === false) {
-        die('Erreur dans la pr�paration de la requ�te : ' . $conn->error);
+    $query = $connect->VerifAccount();
+    if ($query->num_rows==0){
+        $connect->AJoutAccount();
+        header("Location: ../Vue/login.html");
+    }else{
+        echo "Email déjà existant.";
     }
+    
 
-    $client = "1";
-    $admin = "0";
-
-    $stmt->bind_param("sssssssssss", $nom, $prenom, $birth, $tel, $adress, $client, $admin, $email, $ville, $zip, $hashed);
-
-    if ($stmt->execute()) {
-        header("Location: login.html");
-        exit();
-    } else {
-        echo "Erreur : " . $stmt->error;
-    }
-
-    $stmt->close();
-    $conn->close();
 }
 ?>

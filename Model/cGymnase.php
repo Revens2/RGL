@@ -1,6 +1,4 @@
 <?php
-include '../db_connect.php';
-
 
 
 class cGymnase
@@ -8,96 +6,60 @@ class cGymnase
     private $conn;
     private $db;
 
-   
+    private cbdd $cbdd;
 
-    public function __construct($dbConnection)
+    public function __construct($cbdd)
     {
-        $this->conn = $dbConnection;
+        $this->conn = $cbdd;
     }
 
-    public function GetGym()
-    {
-        $stmt = $this->conn->prepare("SELECT Id_Gymnase, Nom, Coordonnees_latitude, Coordonnees_longitude, Adresse, Ville, Zip FROM gymnase");
-        $stmt->execute();
-        $result = $stmt->get_result();
 
-        return $result;
+    public function GetGym()
+
+    {
+        return $this->conn->SelectGym();
     }
 
     public function GetGym_sport()
     {
-        $stmt = $this->conn->prepare("SELECT Id_Gymnase, Id_Sport FROM gymnase_sport");
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        return $result;
+        return $this->conn->SelectGym_Sport();
     }
 
     public function GetOneGym($gymid)
     {
-        $stmt = $this->conn->prepare("SELECT * FROM gymnase WHERE Id_Gymnase = ?");
-        $stmt->bind_param("i", $gymid);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        return $result;
+        return $this->conn->SelectOneGym($gymid);
     }
 
     public function GetOneGym_sport($gymid)
     {
-        $stmt = $this->conn->prepare("SELECT Id_Sport FROM gymnase_sport WHERE Id_Gymnase = ?");
-        $stmt->bind_param("i", $gymid);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        return $result;
-    }
-    public function UpdateParaGym($gymid, $gymname, $latitude, $longitude, $adresse, $ville, $zip)
-    {
-
-        $stmt = $this->conn->prepare("UPDATE `gymnase` SET `Nom` = ?, `Coordonnees_latitude` = ?, `Coordonnees_longitude` = ?, `Adresse` = ?, `Ville` = ?, `Zip` = ? WHERE `Id_Gymnase` = ?");
-        if (!$stmt) {
-            echo "Prepare failed: (" . $this->conn->errno . ") " . $this->conn->error;
-            return false;
-        }
-
-
-        $stmt->bind_param("sddsssi", $gymname, $latitude, $longitude, $adresse, $ville, $zip, $gymid);
-
-        if (!$stmt->execute()) {
-            echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
-            return false;
-        }
-
-        return true;
-    }
-
-    public function DelOneGym_sport($gymid)
-    {
-        $stmt = $this->conn->prepare("DELETE FROM gymnase_sport WHERE Id_Gymnase = ?");
-        $stmt->bind_param("i", $gymid);
-        $stmt->execute();
+        return $this->conn->SelectOneGym_sport($gymid);
 
     }
-
-    public function InsertGym_sport($gymId, $sportId)
+    public function MAJParaGym($gymid, $gymname, $latitude, $longitude, $adresse, $ville, $zip)
     {
-        $stmt = $this->conn->prepare("INSERT INTO gymnase_sport (Id_Gymnase, Id_Sport) VALUES (?, ?)");
-        $stmt->bind_param("ii", $gymId, $sportId);
 
-        return $stmt->execute();
+        return $this->conn->UpdateParaGym($gymid, $gymname, $latitude, $longitude, $adresse, $ville, $zip);
+    }
+
+    public function SuppOneGym_sport($gymid)
+    {
+        return $this->conn->DelOneGym_sport($gymid);
+    }
+
+    public function AddGym_sport($gymId, $sportId)
+    {
+        return $this->conn->InsertGym_sport($gymId, $sportId);
     }
 
     public function getddlgym($selectedGymId)
     {
-
 
         if ($selectedGymId === null) {
             $selectedGymId = 0;
         }
 
         $gymList = [];
-        $result = $this->conn->query("SELECT Id_Gymnase, Nom FROM gymnase");
+        $result = $this->conn->SelectNamGym();
         while ($row = $result->fetch_assoc()) {
             $gymList[] = $row;
         }

@@ -1,12 +1,13 @@
 <?php
 session_start();
-include '../db_connect.php';
-include '../Model/cConnected.php';
+require_once '../Model/cbdd.php';
+include '../Model/cUtilisateur.php';
 include '../Model/cReservation.php';
 include '../Model/cGymnase.php';
 include '../Model/cSport.php';
 
-$connect = new cConnected($conn);
+$conn = new cbdd();
+$user = new cUtilisateur();
 $reserv = new cReservation($conn);
 $gym = new cGymnase($conn);
 $sport = new cSport($conn);
@@ -59,13 +60,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $ville = isset($_POST['paraville']) ? $_POST['paraville'] : null;
             $zip = isset($_POST['parazip']) ? (int) $_POST['parazip'] : null;
 
-            $result = $gym->UpdateParaGym($gymId, $gymname, $latitude, $longitude, $adresse, $ville, $zip);
+            $result = $gym->MAJParaGym($gymId, $gymname, $latitude, $longitude, $adresse, $ville, $zip);
 
             if ($result) {
-                $gym->DelOneGym_sport($gymId);
+                $gym->SuppOneGym_sport($gymId);
                 if (isset($_POST['sports']) && is_array($_POST['sports'])) {
                     foreach ($_POST['sports'] as $sport_id) {
-                        $gym->InsertGym_sport($gymId, $sport_id);
+                        $gym->AddGym_sport($gymId, $sport_id);
                     }
                 }
 
@@ -105,13 +106,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 exit;
             }
 
-            $reserv->addReservation($gymId, $userId, $sportId, $dateDebut, $dateFin, $commentaire);
+            $reserv->AjoutReservation($gymId, $userId, $sportId, $dateDebut, $dateFin, $commentaire);
 
         } elseif ($action == 'add_sport') {
             $name = isset($_POST['sport_nom']) ? $_POST['sport_nom'] : null;
             $collec = isset($_POST['collectif']) ? 1 : 0;
 
-            $sport->AddSport($name, $collec);
+            $sport->AjoutSport($name, $collec);
         }
     }
 }
@@ -162,6 +163,4 @@ if ($result->num_rows > 0) {
     }
 }
 
-$conn->close();
-include '../Vue/main.php';
 ?>

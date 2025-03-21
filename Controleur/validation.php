@@ -3,13 +3,13 @@ session_start();
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-include '../db_connect.php';
-include '../Model/cConnected.php';
+require_once '../Model/cbdd.php';
+include '../Model/cUtilisateur.php';
 require_once '../Model/cReservation.php';
 
 
 
-$connect = new cConnected($conn);
+$conn = new cbdd();
 $reserv = new cReservation($conn);
 $editGymData = null;
 

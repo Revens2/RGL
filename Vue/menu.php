@@ -1,4 +1,4 @@
-
+<?php include '../Controleur/menu.php'; ?>
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -7,18 +7,18 @@
     <nav>
         <ul>
             <li>
-                <a href="../Controleur/main.php">
+                <a href="../Vue/main.php">
                     <img src="../icons/home.png" alt="Home">
                 </a>
             </li>
-        <?php if ($connect->isClient()): ?>
+        <?php if ($user->GetIsClient()): ?>
              <li>
                 <a href="../Vue/reservation.php">
                     <img src="../icons/reservation.png" alt="Booking">
                 </a>
             </li>
          <?php endif; ?>
-        <?php if ($connect->isAdmin()): ?>
+        <?php if ($user->GetIsAdmin()): ?>
              <li>
                 <a href="../Vue/validation.php">
                     <img src="../icons/validation.png" alt="Validation">

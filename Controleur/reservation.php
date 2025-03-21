@@ -1,11 +1,12 @@
 <?php
 session_start();
-include '../db_connect.php';
-include '../Model/cConnected.php';
+require_once '../Model/cbdd.php';
+include '../Model/cUtilisateur.php';
 include '../Model/cReservation.php';
 include '../Model/cGymnase.php';
 include '../Model/cSport.php';
-$connect = new cConnected($conn);
+$conn = new cbdd();
+$connect = new cUtilisateur();
 $reserv = new cReservation($conn);
 $gym = new cGymnase($conn);
 $sport = new cSport($conn);
@@ -23,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $action = $_POST['action'];
         if ($action == 'supp') {
             $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
-            $reservations = $reserv->deleteReservation($resaid);
+            $reservations = $reserv->SuppReservation($resaid);
         } elseif ($action == 'openresaedit') {
             $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
             $editGymData = $reserv->getReservationDetails($resaid);

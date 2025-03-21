@@ -1,11 +1,12 @@
 <?php
 session_start();
-include '../db_connect.php';
-include '../Model/cConnected.php';
+require_once '../Model/cbdd.php';
+include '../Model/cUtilisateur.php';
 include '../Model/cReservation.php';
 include '../Model/cGymnase.php';
 include '../Model/cSport.php';
-$connect = new cConnected($conn);
+$conn = new cbdd();
+$connect = new cUtilisateur();
 $reserv = new cReservation($conn);
 $gym = new cGymnase($conn);
 $sport = new cSport($conn);
