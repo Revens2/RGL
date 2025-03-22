@@ -1,7 +1,6 @@
 <?php
 session_start();
-require_once '../Model/cbdd.php';
-include '../Model/cUtilisateur.php';
+require_once '../Model/cUtilisateur.php';
 $connect = new cUtilisateur();
 
 
@@ -18,8 +17,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $connect->ModifAccount();
 }
-$userid = $_SESSION['user_id'];
- $connect->SetUserId($userid);
  $userData = $connect->account();
 
 require_once '../Vue/Vaccount.php';

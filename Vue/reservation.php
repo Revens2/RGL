@@ -1,4 +1,4 @@
-<?php include '../Controleur/reservation.php'; ?>
+<?php require_once '../Controleur/reservation.php'; ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -7,12 +7,11 @@
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <?php include 'menu.php'; ?>
+    <?php require_once 'menu.php'; ?>
 
     <div class="container">
         <h1>Mes Réservations</h1>
 
-        <h2>Liste de mes Réservations</h2>
         <table>
             <tr>
                 <th>Statut</th>

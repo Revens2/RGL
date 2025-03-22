@@ -1,4 +1,4 @@
-<?php include '../Controleur/historique.php'; ?>
+<?php require_once '../Controleur/historique.php'; ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <?php include 'menu.php'; ?>
+    <?php require_once 'menu.php'; ?>
 
     <div class="container">
         <h1>Mes Réservations</h1>
@@ -35,6 +35,6 @@
 
     
     </div>
-    <?php include 'footer.hmtl'; ?>
+    <?php require_once 'footer.hmtl'; ?>
 </body>
 </html>

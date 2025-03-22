@@ -10,7 +10,7 @@ require '../Controleur/Caccount.php';
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
 </head>
 <body>
-    <?php include '../Vue/menu.php'; ?>
+    <?php require_once '../Vue/menu.php'; ?>
 
     <div class="account-container">
         <h2>Mon Compte</h2>

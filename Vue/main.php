@@ -15,7 +15,7 @@
     </script>
 </head>
 <body>
-    <?php include '../Vue/menu.php'; ?>
+    <?php require_once '../Vue/menu.php'; ?>
      
 
     <div class="container">

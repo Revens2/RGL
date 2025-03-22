@@ -1,4 +1,4 @@
-<?php include '../Controleur/validation.php';
+<?php require_once '../Controleur/validation.php';
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -15,7 +15,7 @@ error_reporting(E_ALL);
 </head>
 
 <body>
- <?php include '../Vue/menu.php'; ?>
+ <?php require_once '../Vue/menu.php'; ?>
     <div class="container">
         <h1>Liste des Validations </h1>
 

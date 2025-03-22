@@ -1,6 +1,6 @@
 <?php
 require_once '../Model/cbdd.php';
-include '../Model/cUtilisateur.php';
+require_once '../Model/cUtilisateur.php';
 $connect = new cUtilisateur();
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 

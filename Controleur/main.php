@@ -1,16 +1,15 @@
 <?php
 session_start();
 require_once '../Model/cbdd.php';
-include '../Model/cUtilisateur.php';
-include '../Model/cReservation.php';
+require_once '../Model/cUtilisateur.php';
+require_once '../Model/cReservation.php';
 include '../Model/cGymnase.php';
 include '../Model/cSport.php';
 
-$conn = new cbdd();
-$user = new cUtilisateur();
-$reserv = new cReservation($conn);
-$gym = new cGymnase($conn);
-$sport = new cSport($conn);
+$cUtilisateur = new cUtilisateur();
+$reserv = new cReservation();
+$gym = new cGymnase();
+$sport = new cSport();
 
 $editGymData = null;
 $showEditModal = false;

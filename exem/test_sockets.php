@@ -1,5 +1,5 @@
 <?php
-include 'db_connect.php';
+require_once 'db_connect.php';
 
 if ($_SESSION['role'] != 'chef de projet') {
     header("Location: login.php");

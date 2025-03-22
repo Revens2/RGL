@@ -4,13 +4,10 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 require_once '../Model/cbdd.php';
-include '../Model/cUtilisateur.php';
+require_once '../Model/cUtilisateur.php';
 require_once '../Model/cReservation.php';
 
-
-
-$conn = new cbdd();
-$reserv = new cReservation($conn);
+$cReservation = new cReservation();
 $editGymData = null;
 
 
@@ -21,16 +18,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $action = $_POST['action'];
 
         if ($action == 'resaedit') {
-            $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
+            $cReservation->setResaid(isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null);
             $onpopup = 1;
-            $editGymData = $reserv->GetValidReservation($resaid);
+            $editGymData = $cReservation->GetValidReservation();
 
 
         } elseif ($action == 'saveedit') {
 
-            $valid = isset($_POST['ddlvalid']) ? (int) $_POST['ddlvalid'] : null;
-            $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
-            $reserv->editValidation($valid, $resaid);
+            $cReservation->setValid(isset($_POST['ddlvalid']) ? (int) $_POST['ddlvalid'] : null);
+            $cReservation->setResaid(isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null);
+            $cReservation->editValidation();
 
             header("Location: " . $_SERVER['PHP_SELF']);
             exit();
@@ -39,8 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } elseif ($action == 'delete') {
 
 
-            $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
-            $reserv->cancelReservation($resaid);
+            $cReservation->setResaid(isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null);
+            $cReservation->cancelReservation();
 
             header("Location: " . $_SERVER['PHP_SELF']);
             exit();
@@ -54,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-$dt = $reserv->getUserValidation();
+$dt = $cReservation->getUserValidation();
 
 $finalRows = [];  
 while ($row = $dt->fetch_assoc()) {

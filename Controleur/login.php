@@ -1,7 +1,6 @@
 <?php
 session_start();
-require_once '../Model/cbdd.php';
-include '../Model/cUtilisateur.php';
+require_once '../Model/cUtilisateur.php';
 $connect = new cUtilisateur();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

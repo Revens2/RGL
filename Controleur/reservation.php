@@ -1,43 +1,40 @@
 <?php
 session_start();
-require_once '../Model/cbdd.php';
-include '../Model/cUtilisateur.php';
-include '../Model/cReservation.php';
-include '../Model/cGymnase.php';
-include '../Model/cSport.php';
-$conn = new cbdd();
-$connect = new cUtilisateur();
-$reserv = new cReservation($conn);
-$gym = new cGymnase($conn);
-$sport = new cSport($conn);
+require_once '../Model/cUtilisateur.php';
+require_once '../Model/cReservation.php';
+require_once '../Model/cGymnase.php';
+require_once '../Model/cSport.php';
+$cUtilisateur = new cUtilisateur();
+$cReservation = new cReservation();
+$gym = new cGymnase();
+$sport = new cSport();
 $editGymData = null;
 $selectedGymId = null;
 $selectedSportId = null;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['refresh'])) {
-       
-        $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
+
+        $cReservation->setResaid(isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null);
         $selectedGymId = isset($_POST['gym_id']) ? (int) $_POST['gym_id'] : null;
-        $editGymData = $reserv->getReservationDetails($resaid);
+        $editGymData = $cReservation->getReservationDetails();
     } elseif (isset($_POST['action'])) {
         $action = $_POST['action'];
         if ($action == 'supp') {
-            $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
-            $reservations = $reserv->SuppReservation($resaid);
+            $cReservation->setResaid(isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null);
+            $cReservation->SuppReservation();
         } elseif ($action == 'openresaedit') {
-            $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
-            $editGymData = $reserv->getReservationDetails($resaid);
+            $cReservation->setResaid(isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null);
+            $editGymData = $cReservation->getReservationDetails();
         } elseif ($action == 'saveedit') {
-          
-            $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
-            $gym_id = isset($_POST['gym_id']) ? (int) $_POST['gym_id'] : null;
-            $sport_id = isset($_POST['sport_id']) ? (int) $_POST['sport_id'] : null;
-            $datedebut = isset($_POST['datedebut']) ? $_POST['datedebut'] : null;
-            $datefin = isset($_POST['datefin']) ? $_POST['datefin'] : null;
-            $commentaire = isset($_POST['commentaire']) ? $_POST['commentaire'] : null;
 
-            $reserv->editReservation($resaid, $gym_id, $sport_id, $datedebut, $datefin, $commentaire);
+            $cReservation->setResaid(isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null);
+            $cReservation->setGymId(isset($_POST['gym_id']) ? (int) $_POST['gym_id'] : null);
+            $cReservation->setSportId(isset($_POST['sport_id']) ? (int) $_POST['sport_id'] : null);
+            $cReservation->setDateDebut(isset($_POST['datedebut']) ? $_POST['datedebut'] : null);
+            $cReservation->setDateFin(isset($_POST['datefin']) ? $_POST['datefin'] : null);
+            $cReservation->setCommentaire(isset($_POST['commentaire']) ? $_POST['commentaire'] : null);
+            $cReservation->editReservation();
 
             header("Location: " . $_SERVER['PHP_SELF']);
             exit();
@@ -54,10 +51,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-$userid = isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : null;
 
-
-$dt = $reserv->getUserReservations($userid);
+$cReservation->SetUserId($cUtilisateur->GetUserId());
+$dt = $cReservation->getUserReservations();
 
 $finalRows = [];
 while ($row = $dt->fetch_assoc()) {

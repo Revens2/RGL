@@ -3,15 +3,12 @@
 class cSport
 {
     private $conn;
-    private $db;
 
-    private cbdd $cbbd;
-
-    public function __construct($cbbd)
+    public function __construct()
     {
-        $this->conn = $cbbd;
-    }
+        $this->conn = new cbdd();
 
+    }
     public function GetSport()
     {
  
@@ -20,7 +17,7 @@ class cSport
 
     public function GetGym_sport()
     {
-         return $this->conn->SelSelectGym_SportectSport();
+         return $this->conn->SelectGym_Sport();
     }
 
     public function GetAllSport()

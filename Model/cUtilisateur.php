@@ -1,4 +1,5 @@
 <?php
+require_once '../Model/cbdd.php';
 class cUtilisateur
 {
 
@@ -16,8 +17,10 @@ class cUtilisateur
     private string $ville = '';
     private int $zip = 0;
 
+    private cbdd $cbdd;
+
     #regionget
-    public function getMail()
+    public function getEmail()
     {
         return $this->mail;
     }
@@ -140,8 +143,8 @@ class cUtilisateur
         $this->conn = new cbdd();
 
         if($this->isAuthenticated()){
-            $userId = $_SESSION['user_id'];
-            $result = $this->conn->SelectUser($userId);
+            $this->SetUserId($_SESSION['user_id']);
+            $result = $this->conn->SelectUser($this->GetUserId());
 
             if ($result && $result->num_rows > 0) {
                 $row = $result->fetch_assoc();
@@ -163,12 +166,12 @@ class cUtilisateur
  public function login()
     {
             $query = $this->conn->SelectLogin($this);
-
+             
             if ($query->num_rows == 1) {
-                $query->bind_result($user_id, $isClient, $isAdmin);
+                $query->bind_result($userid, $isClient, $isAdmin);
                 $query->fetch();
 
-                $_SESSION['user_id'] = $user_id;
+                $_SESSION['user_id'] = $userid;
                 $this->SetIsClient($isClient);
                 $this->SetIsAdmin($isAdmin);
                 
@@ -205,8 +208,7 @@ class cUtilisateur
 
     public function ModifAccount()
     {
-        $this->SetUserId($_SESSION['user_id']);
-        $this->conn->UpdateAccount($this->userid, $this->nom, $this->prenom, $this->birth, $this->tel, $this->adresse, $this->ville, $this->zip, $this->mail);
+        $this->conn->UpdateAccount($this);
     }
 
      public function VerifAccount()

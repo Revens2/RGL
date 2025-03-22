@@ -1,4 +1,4 @@
-<?php include '../Controleur/menu.php'; ?>
+<?php require_once '../Controleur/menu.php'; ?>
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">

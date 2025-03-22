@@ -4,13 +4,11 @@
 class cGymnase
 {
     private $conn;
-    private $db;
-
-    private cbdd $cbdd;
-
-    public function __construct($cbdd)
+ 
+    public function __construct()
     {
-        $this->conn = $cbdd;
+        $this->conn = new cbdd();
+
     }
 
 

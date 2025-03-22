@@ -57,7 +57,7 @@ public $conn;
 
     public function SelectLogin($connect)
     {
-        $mail = $connect->getMail();
+        $mail = $connect->getEmail();
         $mdp = $connect->getMdp();
         return $this->ExecuteSelectedtostore("SELECT Id_Utilisateur, isClient, isAdmin FROM utilisateur WHERE Email = '$mail' AND Mot_de_Passe = '$mdp'");
 
@@ -81,9 +81,18 @@ public $conn;
 
     }
 
-    public function UpdateAccount($userId, $nom, $prenom, $birth, $tel, $adress, $ville, $zip, $email)
+    public function UpdateAccount($user)
     {
-        return $this->ExecuteSelected("UPDATE Utilisateur SET `Nom` = '$nom', `Prenom` = '$prenom', `Date_de_naissance` = '$birth', `Numero_de_telephone` = '$tel', `Adresse`= '$adress', `Email` = '$email', `Ville`= '$ville', `Zip` = '$zip'  WHERE Id_Utilisateur = $userId ");
+        $nom = $user->GetNom();
+        $prenom = $user->GetPrenom();
+        $birth = $user->GetBirth();
+        $tel = $user->GetTel();
+        $adresse = $user->GetAdresse();
+        $email = $user->GetEmail();
+        $ville = $user->GetVille();
+        $zip = $user->GetZip();
+        $userId = $user->GetUserId();
+        return $this->ExecuteSelected("UPDATE Utilisateur SET `Nom` = '$nom', `Prenom` = '$prenom', `Date_de_naissance` = '$birth', `Numero_de_telephone` = '$tel', `Adresse`= '$adresse', `Email` = '$email', `Ville`= '$ville', `Zip` = '$zip'  WHERE Id_Utilisateur = $userId ");
 
     }
 
@@ -194,8 +203,9 @@ public $conn;
     }
 
 
-    public function SelectUserReservations($userId)
+    public function SelectUserReservations($cReservation)
     {
+        $userId=$cReservation->GetUserId();
         return $this->ExecuteSelected("SELECT r.Id_reservation, r.Date_debut, r.Date_fin, s.Nom_du_sport, r.statut, g.nom FROM reservation r JOIN sport s ON s.Id_Sport = r.Id_Sport JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase WHERE Id_Utilisateur = $userId and r.statut > 0");
 
     }
@@ -206,44 +216,57 @@ public $conn;
 
     }
 
-    public function SelectUserHistorique($userId)
+    public function SelectUserHistorique($reservation)
     {
+        $userId=$reservation->GetUserId();
         return $this->ExecuteSelected("SELECT r.Id_reservation, r.Date_debut, r.Date_fin, s.Nom_du_sport, g.nom, r.Commentaire FROM reservation r JOIN sport s ON s.Id_Sport = r.Id_Sport JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase WHERE Id_Utilisateur = $userId and statut = 0");
 
     }
 
-    public function SelectReservationDetails($reservationId)
+    public function SelectReservationDetails($cReservation)
     {
+        $reservationId=$cReservation->GetReservationId();
         return $this->ExecuteSelected("SELECT r.Date_debut, r.Date_fin, r.Commentaire, g.Id_Gymnase, s.Nom_du_sport, s.Id_Sport FROM reservation r JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase JOIN sport s ON s.Id_Sport = r.Id_Sport WHERE Id_reservation = $reservationId");
 
     }
 
-    public function UpdateValidation($valid, $resaid)
+    public function UpdateValidation($cReservation)
     {
-        return $this->ExecuteSelected("UPDATE reservation SET statut = $valid WHERE Id_reservation = $resaid");
+        $valid = $cReservation->GetValid();
+        $reservationId = $cReservation->GetReservationId();
+        return $this->ExecuteSelected("UPDATE reservation SET statut = $valid WHERE Id_reservation = $reservationId");
 
     }
 
-    public function EndReservation($resaid)
+    public function EndReservation($cReservation)
     {
-        return $this->ExecuteSelected("UPDATE reservation SET statut = 0 WHERE Id_reservation =  $resaid");
+        $reservationId = $cReservation->GetReservationId();
+        return $this->ExecuteSelected("UPDATE reservation SET statut = 0 WHERE Id_reservation =  $reservationId");
 
     }
-    public function UpdateReservation($userId, $resaid, $sportId, $dateDebut, $dateFin, $commentaire)
+    public function UpdateReservation($cReservation)
     {
+        $resaid = $cReservation->GetResaid();
+        $gymId = $cReservation->GetGymId();
+        $sportId = $cReservation->GetSportId();
+        $dateDebut = $cReservation->GetDateDebut();
+        $dateFin = $cReservation->GetDateFin();
+        $commentaire = $cReservation->GetCommentaire();
         $statut = 1;
-        return $this->ExecuteSelected("update reservation set  `Id_Utilisateur` = $userId, `Id_Sport`= $sportId, `Date_debut`= $dateDebut, `Date_fin` = $dateFin, `Commentaire` = $commentaire, `statut` = $statut where Id_reservation = $resaid ");
+        return $this->ExecuteSelected("update reservation set `Id_Gymnase`= $gymId, `Id_Sport`= $sportId, `Date_debut`= '$dateDebut', `Date_fin` = '$dateFin', `Commentaire` = '$commentaire', `statut` = $statut where Id_reservation = $resaid ");
 
     }
 
-    public function DeleteReservation($resaid)
+    public function DeleteReservation($cReservation)
     {
+        $resaid = $cReservation->GetResaid();
         return $this->ExecuteSelected("delete from reservation where Id_reservation =  $resaid ");
 
     }
 
-    public function SelectValidReservation($resaid)
+    public function SelectValidReservation($cReservation)
     {
+        $resaid = $cReservation->GetResaid();
         return $this->ExecuteSelected("SELECT r.Date_debut, r.Date_fin, r.statut, r.Commentaire, g.Nom, s.Nom_du_sport FROM reservation r JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase JOIN sport s ON s.Id_Sport = r.Id_Sport WHERE Id_reservation =  $resaid ");
 
     }
