@@ -7,9 +7,9 @@ include '../Model/cGymnase.php';
 include '../Model/cSport.php';
 
 $cUtilisateur = new cUtilisateur();
-$reserv = new cReservation();
-$gym = new cGymnase();
-$sport = new cSport();
+$cReservation = new cReservation();
+$cGymnase = new cGymnase();
+$cSport = new cSport();
 
 $editGymData = null;
 $showEditModal = false;
@@ -32,40 +32,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $action = $_POST['action'];
 
         if ($action == 'edit_gymnase') {
-            $gymid = $_POST['gymid'];
-
-            $result = $gym->GetOneGym($gymid);
+            $cGymnase->SetGymId($_POST['gymid']);
+            $result = $cGymnase->GetOneGym();
             if ($result->num_rows > 0) {
                 $editGymData = $result->fetch_assoc();
                 $showEditModal = true;
             }
 
-            $result = $sport->GetAllSport();
+            $result = $cSport->GetAllSport();
             while ($row = $result->fetch_assoc()) {
                 $allSports[] = $row;
             }
 
-            $result = $gym->GetOneGym_sport($gymid);
+            $result = $cGymnase->GetOneGym_sport();
             while ($row = $result->fetch_assoc()) {
                 $associatedSports[] = $row['Id_Sport'];
             }
 
         } elseif ($action == 'parametre') {
-            $gymId = isset($_POST['paragymid']) ? (int) $_POST['paragymid'] : null;
-            $gymname = isset($_POST['paranom']) ? $_POST['paranom'] : null;
-            $latitude = isset($_POST['paralatitude']) ? (float) $_POST['paralatitude'] : null;
-            $longitude = isset($_POST['paralongitude']) ? (float) $_POST['paralongitude'] : null;
-            $adresse = isset($_POST['tbparaadresse']) ? $_POST['tbparaadresse'] : null;
-            $ville = isset($_POST['paraville']) ? $_POST['paraville'] : null;
-            $zip = isset($_POST['parazip']) ? (int) $_POST['parazip'] : null;
+            $cGymnase->setGymId(isset($_POST['paragymid']) ? (int) $_POST['paragymid'] : null);
+            $cGymnase->setGymname(isset($_POST['paranom']) ? $_POST['paranom'] : null);
+            $cGymnase->setLatitude(isset($_POST['paralatitude']) ? (float) $_POST['paralatitude'] : null);
+            $cGymnase->setLongitude(isset($_POST['paralongitude']) ? (float) $_POST['paralongitude'] : null);
+            $cGymnase->setAdresse(isset($_POST['tbparaadresse']) ? $_POST['tbparaadresse'] : null);
+            $cGymnase->setVille(isset($_POST['paraville']) ? $_POST['paraville'] : null);
+            $cGymnase->setZip(isset($_POST['parazip']) ? (int) $_POST['parazip'] : null);
 
-            $result = $gym->MAJParaGym($gymId, $gymname, $latitude, $longitude, $adresse, $ville, $zip);
+            $result = $cGymnase->MAJParaGym();
 
             if ($result) {
-                $gym->SuppOneGym_sport($gymId);
+                $cGymnase->SuppOneGym_sport();
                 if (isset($_POST['sports']) && is_array($_POST['sports'])) {
                     foreach ($_POST['sports'] as $sport_id) {
-                        $gym->AddGym_sport($gymId, $sport_id);
+                        $cGymnase->AddGym_sport();
                     }
                 }
 
@@ -105,18 +104,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 exit;
             }
 
-            $reserv->AjoutReservation($gymId, $userId, $sportId, $dateDebut, $dateFin, $commentaire);
+            $cReservation->AjoutReservation($gymId, $userId, $sportId, $dateDebut, $dateFin, $commentaire);
 
         } elseif ($action == 'add_sport') {
             $name = isset($_POST['sport_nom']) ? $_POST['sport_nom'] : null;
             $collec = isset($_POST['collectif']) ? 1 : 0;
 
-            $sport->AjoutSport($name, $collec);
+            $cSport->AjoutSport($name, $collec);
         }
     }
 }
 
-$result = $gym->Getgym();
+$result = $cGymnase->Getgym();
 
 $gymnases = [];
 
@@ -136,7 +135,7 @@ if ($result->num_rows > 0) {
     }
 }
 
-$result = $gym->GetGym_sport();
+$result = $cGymnase->GetGym_sport();
 $gymnaseSports = [];
 
 if ($result->num_rows > 0) {
@@ -152,7 +151,7 @@ foreach ($gymnases as &$gymnase) {
     $gymnase['sports'] = isset($gymnaseSports[$gymId]) ? $gymnaseSports[$gymId] : [];
 }
 
-$result = $sport->GetSport();
+$result = $cSport->GetSport();
 
 $sports = [];
 

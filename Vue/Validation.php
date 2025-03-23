@@ -68,12 +68,12 @@ error_reporting(E_ALL);
           <h2>Modifier la Réservation</h2>
           <form method="POST" action="validation.php">
             <input type="hidden" name="action" value="saveedit">
-            <input type="hidden" name="Id_reservation" value="<?= htmlspecialchars($resaid) ?>">
+            <input type="hidden" name="Id_reservation" value="<?= htmlspecialchars($editGymData['Id_reservation'] ?? '') ?>">
 
             <label for="ddlvalid">Validation :</label>
             <select id="ddlvalid" name="ddlvalid">
               <option value="1" <?= ($editGymData['statut'] == 1) ? 'selected' : ''; ?>>
-                Nouvelle réservation
+                Sélectionner un statut
               </option>
               <option value="2" <?= ($editGymData['statut'] == 2) ? 'selected' : ''; ?>>
                 Valider
@@ -92,6 +92,7 @@ error_reporting(E_ALL);
               id="gymNameField" 
               name="gymname" 
               value="<?= htmlspecialchars($editGymData['Nom'] ?? '') ?>"
+              readonly="readonly"
             ><br><br>
 
             <label for="sport">Sport :</label>
@@ -100,6 +101,7 @@ error_reporting(E_ALL);
               id="sport" 
               name="sport" 
               value="<?= htmlspecialchars($editGymData['Nom_du_sport'] ?? '') ?>"
+              readonly="readonly"
             ><br><br>
 
             <label for="datedebut">Date de début :</label>
@@ -108,6 +110,7 @@ error_reporting(E_ALL);
               id="datedebut" 
               name="datedebut"
               value="<?= htmlspecialchars($editGymData['Date_debut'] ?? '') ?>"
+              readonly="readonly"
             ><br><br>
 
             <label for="datefin">Date de fin :</label>
@@ -116,6 +119,7 @@ error_reporting(E_ALL);
               id="datefin" 
               name="datefin"
               value="<?= htmlspecialchars($editGymData['Date_fin'] ?? '') ?>"
+              readonly="readonly"
             ><br><br>
 
             <label for="commentaire">Commentaire :</label>
@@ -124,6 +128,7 @@ error_reporting(E_ALL);
               id="commentaire" 
               name="commentaire"
               value="<?= htmlspecialchars($editGymData['Commentaire'] ?? '') ?>"
+              readonly="readonly"
             ><br><br>
 
             <input type="submit" value="Confirmer la réservation">

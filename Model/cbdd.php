@@ -123,32 +123,44 @@ public $conn;
 
     }
 
-    public function SelectOneGym($gymid)
+    public function SelectOneGym($cGymnase)
     {
-        return $this->ExecuteSelected("SELECT * FROM gymnase WHERE Id_Gymnase = $gymid ");
+        $gymid = $cGymnase->GetGymId();
+        return $this->ExecuteSelected("SELECT * FROM gymnase WHERE Id_Gymnase = $gymid");
 
     }
 
 
-    public function UpdateParaGym($gymid, $gymname, $latitude, $longitude, $adresse, $ville, $zip)
+    public function UpdateParaGym($cGymnase)
     {
+        $gymid = $cGymnase->getGymId();
+        $gymname = $cGymnase->getGymname();
+        $latitude = $cGymnase->getLatitude();
+        $longitude = $cGymnase->getLongitude();
+        $adresse = $cGymnase->getAdresse();
+        $ville = $cGymnase->getVille();
+        $zip = $cGymnase->getZip();
         return $this->ExecuteSelected("UPDATE `gymnase` SET `Nom` = $gymname, `Coordonnees_latitude` = $latitude, `Coordonnees_longitude` = $longitude, `Adresse` = $adresse, `Ville` = $ville, `Zip` = $zip WHERE `Id_Gymnase` = $gymid");
 
     }
 
-    public function SelectOneGym_sport($gymid)
+    public function SelectOneGym_sport($cGymnase)
     {
+        $gymid = $cGymnase->GetGymId();
         return $this->ExecuteSelected("SELECT Id_Sport FROM gymnase_sport WHERE Id_Gymnase = $gymid ");
 
     }
 
-    public function DelOneGym_sport($gymid)
+    public function DelOneGym_sport($cGymnase)
     {
+        $gymid = $cGymnase->GetGymId();
         return $this->ExecuteSelected("DELETE FROM gymnase_sport WHERE Id_Gymnase = $gymid ");
 
     }
-    public function InsertGym_sport($gymId, $sportId)
+    public function InsertGym_sport($cGymnase)
     {
+        $gymid = $cGymnase->GetGymId();
+        $sportId = $cGymnase->GetSportId();
         return $this->ExecuteSelected("INSERT INTO gymnase_sport (Id_Gymnase, Id_Sport) VALUES ( $gymId, $sportId) ");
 
     }
@@ -225,7 +237,7 @@ public $conn;
 
     public function SelectReservationDetails($cReservation)
     {
-        $reservationId=$cReservation->GetReservationId();
+        $reservationId=$cReservation->GetResaid();
         return $this->ExecuteSelected("SELECT r.Date_debut, r.Date_fin, r.Commentaire, g.Id_Gymnase, s.Nom_du_sport, s.Id_Sport FROM reservation r JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase JOIN sport s ON s.Id_Sport = r.Id_Sport WHERE Id_reservation = $reservationId");
 
     }
@@ -233,14 +245,14 @@ public $conn;
     public function UpdateValidation($cReservation)
     {
         $valid = $cReservation->GetValid();
-        $reservationId = $cReservation->GetReservationId();
+        $reservationId = $cReservation->GetResaid();
         return $this->ExecuteSelected("UPDATE reservation SET statut = $valid WHERE Id_reservation = $reservationId");
 
     }
 
     public function EndReservation($cReservation)
     {
-        $reservationId = $cReservation->GetReservationId();
+        $reservationId = $cReservation->GetResaid();
         return $this->ExecuteSelected("UPDATE reservation SET statut = 0 WHERE Id_reservation =  $reservationId");
 
     }
@@ -267,7 +279,7 @@ public $conn;
     public function SelectValidReservation($cReservation)
     {
         $resaid = $cReservation->GetResaid();
-        return $this->ExecuteSelected("SELECT r.Date_debut, r.Date_fin, r.statut, r.Commentaire, g.Nom, s.Nom_du_sport FROM reservation r JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase JOIN sport s ON s.Id_Sport = r.Id_Sport WHERE Id_reservation =  $resaid ");
+        return $this->ExecuteSelected("SELECT r.Id_reservation, r.Date_debut, r.Date_fin, r.statut, r.Commentaire, g.Nom, s.Nom_du_sport FROM reservation r JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase JOIN sport s ON s.Id_Sport = r.Id_Sport WHERE Id_reservation =  $resaid ");
 
     }
 
