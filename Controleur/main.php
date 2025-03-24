@@ -64,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $cGymnase->SuppOneGym_sport();
                 if (isset($_POST['sports']) && is_array($_POST['sports'])) {
                     foreach ($_POST['sports'] as $sport_id) {
+                        $cGymnase->setSportId($sport_id);
                         $cGymnase->AddGym_sport();
                     }
                 }
@@ -74,43 +75,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } 
 
         } elseif ($action == 'add_reservation') {
-            $gymId = isset($_POST['gymeid']) ? (int) $_POST['gymeid'] : null;
-            $userId = isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : null;
-            $sportId = isset($_POST['sport']) ? (int) $_POST['sport'] : null;
-            $dateDebut = isset($_POST['datedebut']) ? $_POST['datedebut'] : null;
-            $dateFin = isset($_POST['datefin']) ? $_POST['datefin'] : null;
-            $commentaire = isset($_POST['commentaire']) ? $_POST['commentaire'] : '';
-
+            $cGymnase->setGymId(isset($_POST['gymeid']) ? (int) $_POST['gymeid'] : null);
+            $cGymnase->setUserId(isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : null);
+            $cGymnase->setSportId(isset($_POST['sport']) ? (int) $_POST['sport'] : null);
+            $cGymnase->setDateDebut(isset($_POST['datedebut']) ? $_POST['datedebut'] : null);
+            $cGymnase->setDateFin(isset($_POST['datefin']) ? $_POST['datefin'] : null);
+            $cGymnase->setCommentaire(isset($_POST['commentaire']) ? $_POST['commentaire'] : '');
             $startTime = strtotime($dateDebut);
             $endTime = strtotime($dateFin);
 
-            // Vérif : dates valides ?
             if ($startTime === false || $endTime === false) {
                 $errorMsg = "Les dates saisies ne sont pas valides.";
-                // On redirige en ré‐ouvrant la popup
                 header("Location: main.php?error=" . urlencode($errorMsg) . "&showResaModal=1");
                 exit;
             }
-            // Vérif : date fin > date début ?
+
             if ($endTime <= $startTime) {
                 $errorMsg = "La date de fin doit être strictement postérieure à la date de début.";
                 header("Location: main.php?error=" . urlencode($errorMsg) . "&showResaModal=1");
                 exit;
             }
-            // Vérif : pas de < ni >
+
             if (strpos($commentaire, '<') !== false || strpos($commentaire, '>') !== false) {
                 $errorMsg = "Les chevrons < et > ne sont pas autorisés dans le commentaire.";
                 header("Location: main.php?error=" . urlencode($errorMsg) . "&showResaModal=1");
                 exit;
             }
 
-            $cReservation->AjoutReservation($gymId, $userId, $sportId, $dateDebut, $dateFin, $commentaire);
+            $cReservation->AjoutReservation();
 
         } elseif ($action == 'add_sport') {
-            $name = isset($_POST['sport_nom']) ? $_POST['sport_nom'] : null;
-            $collec = isset($_POST['collectif']) ? 1 : 0;
-
-            $cSport->AjoutSport($name, $collec);
+            $cSport->setName(isset($_POST['sport_nom']) ? $_POST['sport_nom'] : null);
+            $cSport->setCollec(isset($_POST['collectif']) ? 1 : 0);
+            $cSport->AjoutSport();
         }
     }
 }

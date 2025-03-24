@@ -101,9 +101,9 @@ class cReservation
         $this->conn = new cbdd();
     }
 
-    public function AjoutReservation ($gymId, $userId, $sportId, $dateDebut, $dateFin, $commentaire)
+    public function AjoutReservation ()
     {
-         return $this->conn->addReservation($gymId, $userId, $sportId, $dateDebut, $dateFin, $commentaire);
+         return $this->conn->addReservation($this);
     }
 
     public function getUserReservations()

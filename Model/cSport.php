@@ -3,7 +3,34 @@
 class cSport
 {
     private $conn;
+    private $sportId = 0;
+    private $name = '';
+    private $collec = 0;
 
+    public function getSportId()
+    {
+        return $this->sportId;
+    }
+    public function setSportId($sportId)
+    {
+        $this->sportId = $sportId;
+    }
+    public function getName()
+    {
+        return $this->name;
+    }
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+    public function getCollec()
+    {
+        return $this->collec;
+    }
+    public function setCollec($collec)
+    {
+        $this->collec = $collec;
+    }
     public function __construct()
     {
         $this->conn = new cbdd();
@@ -24,9 +51,9 @@ class cSport
     {
         return $this->conn->SelectAllSport();
     }
-    public function AjoutSport($name, $collec)
+    public function AjoutSport()
     {
-        return $this->conn->AddSport($name, $collec);
+        return $this->conn->AddSport($this);
 
     }
     public function getddlsport($selectedGymId, $selectedSportId = null)

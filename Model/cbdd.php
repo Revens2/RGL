@@ -157,9 +157,9 @@ public $conn;
         return $this->ExecuteSelected("DELETE FROM gymnase_sport WHERE Id_Gymnase = $gymid ");
 
     }
-    public function InsertGym_sport($cGymnase)
+    public function InsertGym_sport($cGymnase,)
     {
-        $gymid = $cGymnase->GetGymId();
+        $gymId = $cGymnase->GetGymId();
         $sportId = $cGymnase->GetSportId();
         return $this->ExecuteSelected("INSERT INTO gymnase_sport (Id_Gymnase, Id_Sport) VALUES ( $gymId, $sportId) ");
 
@@ -193,8 +193,10 @@ public $conn;
         return $this->ExecuteSelected("SELECT * FROM sport");
 
     }
-    public function AddSport($name, $collec)
+    public function AddSport($cSport)
     {
+        $name = $this->getName();
+        $collec = $this->getCollec();
         return $this->ExecuteSelected("INSERT INTO sport (Nom_du_sport, Collectif) VALUES ($name, $collec)");
 
     }
@@ -207,8 +209,14 @@ public $conn;
     #regioncReservation
 
 
-    public function addReservation($gymId, $userId, $sportId, $dateDebut, $dateFin, $commentaire)
+    public function addReservation($cGymnase)
     {
+        $gymId = $cGymnase->getGymId();
+        $userId = $cGymnase->getUserId();
+        $sportId = $cGymnase->getSportId();
+        $dateDebut = $cGymnase->getDateDebut();
+        $dateFin = $cGymnase->getDateFin();
+        $commentaire = $cGymnase->getCommentaire();
         $statut = 1;
         return $this->ExecuteSelected("INSERT INTO reservation (Id_Gymnase, Id_Utilisateur, Id_Sport, Date_debut, Date_fin, Commentaire, statut) VALUES ($gymId, $userId, $sportId, $dateDebut, $dateFin, $commentaire, $statut ");
 

@@ -10,6 +10,15 @@ class cGymnase
     private $ville = '';
     private $zip = '';
 
+    private $sportid = 0;
+
+    private $dateDebut = '';
+    private $dateFin = '';
+    private $commentaire = '';
+
+
+    private $userId = 0;
+
     public function __construct()
     {
         $this->conn = new cbdd();
@@ -19,13 +28,58 @@ class cGymnase
     {
         return $this->gymid;
     }
+    
     public function setGymId($gymid)
     {
         $this->gymid = $gymid;
     }
+    public function setSportId($sportid)
+    {
+        $this->sportid = $sportid;
+    }
+    public function getSportId()
+    {
+        return $this->sportid;
+    }
     public function getGymname()
     {
         return $this->gymname;
+    }
+
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
+    }
+
+    public function getDateDebut()
+    {
+        return $this->dateDebut;
+    }
+    public function setDateDebut($dateDebut)
+    {
+        $this->dateDebut = $dateDebut;
+        $this->startTime = strtotime($dateDebut);
+    }
+    public function getDateFin()
+    {
+        return $this->dateFin;
+    }
+    public function setDateFin($dateFin)
+    {
+        $this->dateFin = $dateFin;
+        $this->endTime = strtotime($dateFin);
+    }
+    public function getCommentaire()
+    {
+        return $this->commentaire;
+    }
+    public function setCommentaire($commentaire)
+    {
+        $this->commentaire = $commentaire;
     }
     public function setGymname($gymname)
     {
@@ -97,7 +151,7 @@ class cGymnase
     }
     public function AddGym_sport()
     {
-        return $this->conn->InsertGym_sport();
+        return $this->conn->InsertGym_sport($this);
     }
     public function getddlgym($selectedGymId)
     {
