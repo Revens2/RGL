@@ -70,9 +70,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
 
                 echo "Le gymnase a bien été mis à jour !";
-                header("Location: main.php");
+                header("Location: ../Vue/main.php");
                 exit();
-            } 
+            }
 
         } elseif ($action == 'add_reservation') {
             $cGymnase->setGymId(isset($_POST['gymeid']) ? (int) $_POST['gymeid'] : null);
@@ -86,19 +86,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($startTime === false || $endTime === false) {
                 $errorMsg = "Les dates saisies ne sont pas valides.";
-                header("Location: main.php?error=" . urlencode($errorMsg) . "&showResaModal=1");
+                header("Location: ../Vue/main.php?error=" . urlencode($errorMsg) . "&showResaModal=1");
                 exit;
             }
 
             if ($endTime <= $startTime) {
                 $errorMsg = "La date de fin doit être strictement postérieure à la date de début.";
-                header("Location: main.php?error=" . urlencode($errorMsg) . "&showResaModal=1");
+                header("Location: ../Vue/main.php?error=" . urlencode($errorMsg) . "&showResaModal=1");
                 exit;
             }
 
             if (strpos($commentaire, '<') !== false || strpos($commentaire, '>') !== false) {
                 $errorMsg = "Les chevrons < et > ne sont pas autorisés dans le commentaire.";
-                header("Location: main.php?error=" . urlencode($errorMsg) . "&showResaModal=1");
+                header("Location: ../Vue/main.php?error=" . urlencode($errorMsg) . "&showResaModal=1");
                 exit;
             }
 
@@ -108,6 +108,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $cSport->setName(isset($_POST['sport_nom']) ? $_POST['sport_nom'] : null);
             $cSport->setCollec(isset($_POST['collectif']) ? 1 : 0);
             $cSport->AjoutSport();
+            header("Location: ../Vue/main.php");
+        } elseif ($action == 'add_gymnase') {
+            $cGymnase->setGymname(isset($_POST['nom']) ? $_POST['nom'] : null);
+            $cGymnase->setLatitude(isset($_POST['tblatitude']) ? $_POST['tblatitude'] : null);
+            $cGymnase->setLongitude(isset($_POST['tblongitude']) ? $_POST['tblongitude'] : null);
+            $cGymnase->setAdresse(isset($_POST['tbadresse']) ? $_POST['tbadresse'] : null);
+            $cGymnase->setVille(isset($_POST['tbville']) ? $_POST['tbville'] : null);
+            $cGymnase->setZip(isset($_POST['tbzip']) ? (int) $_POST['tbzip'] : null);
+
+            $cGymnase->AjoutGym();
+            
         }
     }
 }

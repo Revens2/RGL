@@ -55,56 +55,62 @@ public $conn;
     }
     #regioncUtilisateur
 
-    public function SelectLogin($connect)
+    public function SelectLogin($cUtilisateur)
     {
-        $mail = $connect->getEmail();
-        $mdp = $connect->getMdp();
+        $mail = $cUtilisateur->getEmail();
+        $mdp = $cUtilisateur->getMdp();
         return $this->ExecuteSelectedtostore("SELECT Id_Utilisateur, isClient, isAdmin FROM utilisateur WHERE Email = '$mail' AND Mot_de_Passe = '$mdp'");
 
     }
 
-    public function SelectUser($userid)
+    public function SelectUser($cUtilisateur)
     {
+        $userid = $cUtilisateur->GetUserId();
         return $this->ExecuteSelected("SELECT isClient, isAdmin FROM utilisateur WHERE Id_Utilisateur = $userid ");
 
     }
-    public function SelectUserInfo($userid)
-    {
-        return $this->ExecuteSelected("SELECT * FROM utilisateur WHERE Id_Utilisateur = $userid ");
 
-    }
-
-    public function SelectAccount($connect)
+    public function SelectAccount($cUtilisateur)
     {  
-        $userid= $connect->getUserId();
+        $userid= $cUtilisateur->getUserId();
         return $this->ExecuteSelected("SELECT Nom, Prenom, Date_de_naissance, Numero_de_telephone, Email, Adresse, Zip, Ville FROM utilisateur WHERE Id_Utilisateur = $userid ");
 
     }
 
-    public function UpdateAccount($user)
+    public function UpdateAccount($cUtilisateur)
     {
-        $nom = $user->GetNom();
-        $prenom = $user->GetPrenom();
-        $birth = $user->GetBirth();
-        $tel = $user->GetTel();
-        $adresse = $user->GetAdresse();
-        $email = $user->GetEmail();
-        $ville = $user->GetVille();
-        $zip = $user->GetZip();
-        $userId = $user->GetUserId();
+        $nom = $cUtilisateur->GetNom();
+        $prenom = $cUtilisateur->GetPrenom();
+        $birth = $cUtilisateur->GetBirth();
+        $tel = $cUtilisateur->GetTel();
+        $adresse = $cUtilisateur->GetAdresse();
+        $email = $cUtilisateur->GetEmail();
+        $ville = $cUtilisateur->GetVille();
+        $zip = $cUtilisateur->GetZip();
+        $userId = $cUtilisateur->GetUserId();
         return $this->ExecuteSelected("UPDATE Utilisateur SET `Nom` = '$nom', `Prenom` = '$prenom', `Date_de_naissance` = '$birth', `Numero_de_telephone` = '$tel', `Adresse`= '$adresse', `Email` = '$email', `Ville`= '$ville', `Zip` = '$zip'  WHERE Id_Utilisateur = $userId ");
 
     }
 
-    public function AddAccount( $nom, $prenom, $birth, $tel, $adress, $ville, $zip, $email, $hashed)
+    public function AddAccount($cUtilisateur)
     {
+        $nom = $cUtilisateur->GetNom();
+        $prenom = $cUtilisateur->GetPrenom();
+        $birth = $cUtilisateur->GetBirth();
+        $tel = $cUtilisateur->GetTel();
+        $adresse = $cUtilisateur->GetAdresse();
+        $email = $cUtilisateur->GetEmail();
+        $ville = $cUtilisateur->GetVille();
+        $zip = $cUtilisateur->GetZip();
+        $hashed = $cUtilisateur->GetMdp();
         $isClient = 1;
-        return $this->ExecuteSelected("INSERT INTO `Utilisateur` (`Nom`, `Prenom`, `Date_de_naissance`, `Numero_de_telephone`, `Adresse`, `isClient`, `Email`, `Ville`, `Zip`, `Mot_de_Passe`) VALUES ('$nom', '$prenom', '$birth', '$tel', '$adress','$isClient','$email', '$ville', '$zip','$hashed')");
+        return $this->ExecuteSelected("INSERT INTO `Utilisateur` (`Nom`, `Prenom`, `Date_de_naissance`, `Numero_de_telephone`, `Adresse`, `isClient`, `Email`, `Ville`, `Zip`, `Mot_de_Passe`) VALUES ('$nom', '$prenom', '$birth', '$tel', '$adresse','$isClient','$email', '$ville', '$zip','$hashed')");
 
     }
 
-    public function SelectEmail($email)
+    public function SelectEmail($cUtilisateur)
     {
+        $email = $cUtilisateur->GetEmail();
         return $this->ExecuteSelected("select Email from utilisateur where email = '$email' ");
 
     }
@@ -129,6 +135,21 @@ public $conn;
         return $this->ExecuteSelected("SELECT * FROM gymnase WHERE Id_Gymnase = $gymid");
 
     }
+
+    public function InsertGym($cGymnase)
+    {
+        $gymname = $cGymnase->getGymname();
+        $latitude=$cGymnase->getLatitude();
+        $longitude=$cGymnase->getLongitude();
+        $adresse=$cGymnase->getAdresse();
+        $ville=$cGymnase->getVille();
+        $zip=$cGymnase->getZip();
+            
+        return $this->ExecuteSelected("INSERT INTO gymnase (Nom, Coordonnees_lattitude, Coordonnees_longitude, Adresse, Ville, Zip) VALUES ('$gymname','$latitude','$longitude','$adresse','$ville','$zip')");
+
+    }
+
+    
 
 
     public function UpdateParaGym($cGymnase)
@@ -195,9 +216,9 @@ public $conn;
     }
     public function AddSport($cSport)
     {
-        $name = $this->getName();
-        $collec = $this->getCollec();
-        return $this->ExecuteSelected("INSERT INTO sport (Nom_du_sport, Collectif) VALUES ($name, $collec)");
+        $name = $cSport->getName();
+        $collec = $cSport->getCollec();
+        return $this->ExecuteSelected("INSERT INTO sport (Nom_du_sport, Collectif) VALUES ('$name', $collec)");
 
     }
     public function SelectDdlSport($selectedGymId)
@@ -218,7 +239,7 @@ public $conn;
         $dateFin = $cGymnase->getDateFin();
         $commentaire = $cGymnase->getCommentaire();
         $statut = 1;
-        return $this->ExecuteSelected("INSERT INTO reservation (Id_Gymnase, Id_Utilisateur, Id_Sport, Date_debut, Date_fin, Commentaire, statut) VALUES ($gymId, $userId, $sportId, $dateDebut, $dateFin, $commentaire, $statut ");
+        return $this->ExecuteSelected("INSERT INTO reservation (Id_Gymnase, Id_Utilisateur, Id_Sport, Date_debut, Date_fin, Commentaire, statut) VALUES ($gymId, $userId, $sportId, '$dateDebut', '$dateFin', '$commentaire', $statut ");
 
     }
 
@@ -236,9 +257,9 @@ public $conn;
 
     }
 
-    public function SelectUserHistorique($reservation)
+    public function SelectUserHistorique($cReservation)
     {
-        $userId=$reservation->GetUserId();
+        $userId= $cReservation->GetUserId();
         return $this->ExecuteSelected("SELECT r.Id_reservation, r.Date_debut, r.Date_fin, s.Nom_du_sport, g.nom, r.Commentaire FROM reservation r JOIN sport s ON s.Id_Sport = r.Id_Sport JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase WHERE Id_Utilisateur = $userId and statut = 0");
 
     }

@@ -144,7 +144,7 @@ class cUtilisateur
 
         if($this->isAuthenticated()){
             $this->SetUserId($_SESSION['user_id']);
-            $result = $this->conn->SelectUser($this->GetUserId());
+            $result = $this->conn->SelectUser($this);
 
             if ($result && $result->num_rows > 0) {
                 $row = $result->fetch_assoc();
@@ -183,16 +183,7 @@ class cUtilisateur
     }
 
 
-    public function getUserInfo()
-    {
-        if ($this->isAuthenticated()) {
-            $userId = $_SESSION['user_id'];
-            $query = $this->conn->SelectUserInfo($userId);
 
-            return $query->fetch_assoc();
-        }
-        return null;
-    }
      public function account() {
         $query = $this->conn->SelectAccount($this);
         $result = $query;
@@ -203,7 +194,7 @@ class cUtilisateur
     public function AJoutAccount()
     {
         $this->setMdp(md5($this->mdp));
-        $this->conn->AddAccount($this->nom, $this->prenom, $this->birth, $this->tel, $this->adresse, $this->ville, $this->zip, $this->mail, $this->mdp);
+        $this->conn->AddAccount($this);
     }
 
     public function ModifAccount()
@@ -213,6 +204,6 @@ class cUtilisateur
 
      public function VerifAccount()
     {
-        return $this->conn->SelectEmail($this->mail);
+        return $this->conn->SelectEmail($this);
     }
 }

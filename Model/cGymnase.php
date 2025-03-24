@@ -129,6 +129,12 @@ class cGymnase
     {
         return $this->conn->SelectGym();
     }
+    public function AjoutGym()
+    {
+        return $this->conn->InsertGym($this);
+    }
+
+    
     public function GetGym_sport()
     {
         return $this->conn->SelectGym_Sport();
