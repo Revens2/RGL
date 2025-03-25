@@ -161,7 +161,7 @@ public $conn;
         $adresse = $cGymnase->getAdresse();
         $ville = $cGymnase->getVille();
         $zip = $cGymnase->getZip();
-        return $this->ExecuteSelected("UPDATE gymnase SET Nom = '$gymname', Coordonnees_latitude = '$latitude' , 'Coordonnees_longitude' = '$longitude', Adresse = '$adresse', Ville = '$ville', Zip' = $zip WHERE Id_Gymnase = $gymid ");
+        return $this->ExecuteSelected("UPDATE gymnase SET Nom = '$gymname', Coordonnees_latitude = '$latitude' , Coordonnees_longitude = '$longitude', Adresse = '$adresse', Ville = '$ville', Zip = $zip WHERE Id_Gymnase = $gymid ");
 
     }
 

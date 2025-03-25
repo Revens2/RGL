@@ -48,10 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             while ($row = $result->fetch_assoc()) {
                 $associatedSports[] = $row['Id_Sport'];
 
-                header("Location: ../Vue/main.php");
+                
 
             }
-
         } elseif ($action == 'parametre') {
             $cGymnase->setGymId(isset($_POST['paragymid']) ? (int) $_POST['paragymid'] : null);
             $cGymnase->setGymname(isset($_POST['paranom']) ? $_POST['paranom'] : null);

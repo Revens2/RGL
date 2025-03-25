@@ -1,3 +1,4 @@
+<?php require_once '../Controleur/main.php'; ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
