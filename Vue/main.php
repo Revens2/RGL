@@ -123,7 +123,6 @@
                     <input type="hidden" name="action" value="add_sport">
 
                     <label for="sport_nom">Nom du Sport :</label>
-                    <!-- PATTERN POUR BLOQUER CHIFFRES ET CARACTÈRES SPÉCIAUX -->
                     <input
                         type="text"
                         id="tbsportname"
@@ -143,9 +142,7 @@
 
 
 <!-- Modale Réservation -->
-<div 
-  id="resaModal" 
-  class="modal"
+<div id="resaModal" class="modal"
   <?php if ($showResaModal): ?>
       style="display:block;"
   <?php endif; ?>
@@ -154,7 +151,6 @@
         <span id="closeResaModal" class="close">&times;</span>
         <h2>Réserver un gymnase</h2>
 
-        <!-- Affichage du message d'erreur s'il existe -->
         <?php if (!empty($error)): ?>
             <p style="color:red;">
                 <?php echo htmlspecialchars($error); ?>

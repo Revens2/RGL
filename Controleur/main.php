@@ -47,6 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $result = $cGymnase->GetOneGym_sport();
             while ($row = $result->fetch_assoc()) {
                 $associatedSports[] = $row['Id_Sport'];
+
+                header("Location: ../Vue/main.php");
+
             }
 
         } elseif ($action == 'parametre') {
@@ -111,13 +114,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: ../Vue/main.php");
         } elseif ($action == 'add_gymnase') {
             $cGymnase->setGymname(isset($_POST['nom']) ? $_POST['nom'] : null);
-            $cGymnase->setLatitude(isset($_POST['tblatitude']) ? $_POST['tblatitude'] : null);
-            $cGymnase->setLongitude(isset($_POST['tblongitude']) ? $_POST['tblongitude'] : null);
+            $cGymnase->setLatitude(isset($_POST['latitude']) ? $_POST['latitude'] : null);
+            $cGymnase->setLongitude(isset($_POST['longitude']) ?  $_POST['longitude'] : null);
             $cGymnase->setAdresse(isset($_POST['tbadresse']) ? $_POST['tbadresse'] : null);
-            $cGymnase->setVille(isset($_POST['tbville']) ? $_POST['tbville'] : null);
-            $cGymnase->setZip(isset($_POST['tbzip']) ? (int) $_POST['tbzip'] : null);
+            $cGymnase->setVille(isset($_POST['ville']) ? $_POST['ville'] : null);
+            $cGymnase->setZip(isset($_POST['zip']) ? (int) $_POST['zip'] : null);
 
             $cGymnase->AjoutGym();
+            echo "Le gymnase a bien été ajouté !";
+            header("Location: ../Vue/main.php");
+            exit();
             
         }
     }
@@ -169,4 +175,5 @@ if ($result->num_rows > 0) {
     }
 }
 
+require_once '../Vue/main.php';
 ?>
