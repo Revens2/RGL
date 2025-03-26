@@ -230,16 +230,16 @@ public $conn;
     #regioncReservation
 
 
-    public function addReservation($cGymnase)
+    public function addReservation($cReservation)
     {
-        $gymId = $cGymnase->getGymId();
-        $userId = $cGymnase->getUserId();
-        $sportId = $cGymnase->getSportId();
-        $dateDebut = $cGymnase->getDateDebut();
-        $dateFin = $cGymnase->getDateFin();
-        $commentaire = $cGymnase->getCommentaire();
+        $gymId = $cReservation->getGymId();
+        $userId = $cReservation->getUserId();
+        $sportId = $cReservation->getSportId();
+        $dateDebut = $cReservation->getDateDebut();
+        $dateFin = $cReservation->getDateFin();
+        $commentaire = $cReservation->getCommentaire();
         $statut = 1;
-        return $this->ExecuteSelected("INSERT INTO reservation (Id_Gymnase, Id_Utilisateur, Id_Sport, Date_debut, Date_fin, Commentaire, statut) VALUES ($gymId, $userId, $sportId, '$dateDebut', '$dateFin', '$commentaire', $statut ");
+        return $this->ExecuteSelected("INSERT INTO reservation (Id_Gymnase, Id_Utilisateur, Id_Sport, Date_debut, Date_fin, Commentaire, statut) VALUES ($gymId, $userId, $sportId, '$dateDebut', '$dateFin', '$commentaire', $statut ) ");
 
     }
 

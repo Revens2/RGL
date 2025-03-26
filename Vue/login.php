@@ -1,3 +1,4 @@
+<?<?php require_once '../Controleur/login.php'; ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -18,7 +19,8 @@
             <input type="submit" value="Se connecter">
         </form>
 
-        <a class="create-account" href="signup.html">Creer un compte utilisateur</a>
+        <a class="create-account" href="signup.php">Creer un compte utilisateur</a>
+         <?php require_once '../Vue/footer.php'; ?>
     </div>
 </body>
 </html>

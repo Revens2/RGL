@@ -137,7 +137,8 @@ error_reporting(E_ALL);
       </div>
     </div>
     <?php endif; ?>
-  
-</body>
 
+   <?php require_once '../Vue/footer.php'; ?>
+
+</body>
 </html>

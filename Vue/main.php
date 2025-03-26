@@ -308,6 +308,6 @@
 
     <?php require_once '../Vue/Map.php'; ?>
 
-       <?php require_once '../Vue/footer.php'; ?>
+     <?php require_once '../Vue/footer.php'; ?>
 </body>
 </html>

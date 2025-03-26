@@ -33,8 +33,7 @@
             <?php endforeach; ?>
         </table>
 
-    
+     <?php require_once '../Vue/footer.php'; ?>
     </div>
-    <?php require_once 'footer.hmtl'; ?>
 </body>
 </html>
