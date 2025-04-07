@@ -108,5 +108,8 @@ require '../Controleur/Caccount.php';
             <input type="submit" value="Mettre à jour">
         </form>
     </div>
+
+    <?php require_once '../Vue/footer.php'; ?>
+
 </body>
 </html>

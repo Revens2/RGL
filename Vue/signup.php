@@ -26,8 +26,10 @@
             <input type="submit" value="Créer le compte">
         </form>
        <ul>
-            <li><a href="../Vue/login.html" style="text-align: left;display:flex; width:90px;" class="btn">Retour</a></li>
+            <li><a href="../Vue/login.php" style="text-align: left;display:flex; width:90px;" class="btn">Retour</a></li>
       </ul>
+         <?php require_once '../Vue/footer.php'; ?>
     </div>
+     
 </body>
 </html>

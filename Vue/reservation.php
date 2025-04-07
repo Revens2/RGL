@@ -118,6 +118,8 @@
       </div>
     </div>
         <?php endif; ?>
-    </div>
+    
+      <?php require_once '../Vue/footer.php'; ?>
+
 </body>
 </html>

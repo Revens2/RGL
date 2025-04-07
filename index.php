@@ -1,4 +1,4 @@
 <?php
 
-header("Location: Vue/login.html");
+header("Location: Vue/login.php");
 ?>

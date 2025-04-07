@@ -36,7 +36,7 @@
                 </a>
             </li>
             <li>
-                <a href="../Vue/login.html">
+                <a href="../Vue/login.php">
                      <img src="../icons/logout.png" alt="Logout">
                 </a>
             </li>

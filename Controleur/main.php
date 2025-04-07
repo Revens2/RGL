@@ -77,14 +77,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
         } elseif ($action == 'add_reservation') {
-            $cGymnase->setGymId(isset($_POST['gymeid']) ? (int) $_POST['gymeid'] : null);
-            $cGymnase->setUserId(isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : null);
-            $cGymnase->setSportId(isset($_POST['sport']) ? (int) $_POST['sport'] : null);
-            $cGymnase->setDateDebut(isset($_POST['datedebut']) ? $_POST['datedebut'] : null);
-            $cGymnase->setDateFin(isset($_POST['datefin']) ? $_POST['datefin'] : null);
-            $cGymnase->setCommentaire(isset($_POST['commentaire']) ? $_POST['commentaire'] : '');
-            $startTime = strtotime($dateDebut);
-            $endTime = strtotime($dateFin);
+            $cReservation->setGymId(isset($_POST['gymeid']) ? (int) $_POST['gymeid'] : null);
+            $cReservation->setUserId(isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : null);
+            $cReservation->setSportId(isset($_POST['sport']) ? (int) $_POST['sport'] : null);
+            $cReservation->setDateDebut(isset($_POST['datedebut']) ? $_POST['datedebut'] : null);
+            $cReservation->setDateFin(isset($_POST['datefin']) ? $_POST['datefin'] : null);
+            $cReservation->setCommentaire(isset($_POST['commentaire']) ? $_POST['commentaire'] : '');
+            $startTime = strtotime(isset($_POST['datedebut']) ? $_POST['datedebut'] : null);
+            $endTime = strtotime(isset($_POST['datefin']) ? $_POST['datefin'] : null);
 
             if ($startTime === false || $endTime === false) {
                 $errorMsg = "Les dates saisies ne sont pas valides.";
