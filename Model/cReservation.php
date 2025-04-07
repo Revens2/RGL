@@ -160,7 +160,6 @@ class cReservation
     }
     public function GetValidReservation()
     {
-        //$resaid = 17;
         $editGymData = null;
         $result = $this->conn->SelectValidReservation($this);
         if ($result->num_rows > 0) {

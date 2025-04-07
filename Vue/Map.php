@@ -6,7 +6,7 @@
     </head>
 <body>
 <script>
-        // Initialisation de la carte Leaflet
+        // Initialisation de la carte 
         var map = L.map('map').setView([48.80, 5.68], 8);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

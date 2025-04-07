@@ -8,6 +8,5 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="icons\" />
-    <Folder Include="exem\" />
   </ItemGroup>
 </Project>

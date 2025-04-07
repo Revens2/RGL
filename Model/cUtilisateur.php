@@ -3,7 +3,6 @@ require_once '../Model/cbdd.php';
 class cUtilisateur
 {
 
-    private $conn;
     private string $mail = '';
     private string $mdp = '';
     private int $userid = 0;
