@@ -98,28 +98,27 @@ class cReservation
 
     public function __construct()
     {
-        $this->conn = new cbdd();
     }
 
     public function AjoutReservation ()
     {
-         return $this->conn->addReservation($this);
+         return cbdd::addReservation($this);
     }
 
     public function getUserReservations()
     {
-        return $this->conn->SelectUserReservations($this);
+        return cbdd::SelectUserReservations($this);
     }
 
     public function getUserValidation()
     {
-        return $this->conn->SelectUserValidation();
+        return cbdd::SelectUserValidation();
     }
 
     public function getUserHistorique()
     {
         
-        $result = $this->conn->SelectUserHistorique($this);
+        $result = cbdd::SelectUserHistorique($this);
         $historique = [];
         while ($row = $result->fetch_assoc()) {
             $historique[] = $row;
@@ -131,7 +130,7 @@ class cReservation
     public function getReservationDetails()
     {
         $editGymData = null;
-        $result = $this->conn->SelectReservationDetails($this);
+        $result = cbdd::SelectReservationDetails($this);
         if ($result->num_rows > 0) {
             $editGymData = $result->fetch_assoc();
         }
@@ -140,28 +139,28 @@ class cReservation
 
     public function editValidation()
     {
-        $this->conn->UpdateValidation($this);
+        cbdd::UpdateValidation($this);
     }
 
     public function cancelReservation()
     {
-        $this->conn->EndReservation($this);
+        cbdd::EndReservation($this);
     }
 
 
     public function editReservation()
     {
-        $this->conn->UpdateReservation($this);
+        cbdd::UpdateReservation($this);
     }
 
     public function SuppReservation()
     {
-        $this->conn->DeleteReservation($this);
+        cbdd::DeleteReservation($this);
     }
     public function GetValidReservation()
     {
         $editGymData = null;
-        $result = $this->conn->SelectValidReservation($this);
+        $result = cbdd::SelectValidReservation($this);
         if ($result->num_rows > 0) {
             $editGymData = $result->fetch_assoc();
         }

@@ -21,7 +21,7 @@ class cGymnase
 
     public function __construct()
     {
-        $this->conn = new cbdd();
+       cbdd::init();
     }
 
     public function getGymId()
@@ -127,37 +127,37 @@ class cGymnase
     }
     public function GetGym()
     {
-        return $this->conn->SelectGym();
+        return cbdd::SelectGym();
     }
     public function AjoutGym()
     {
-        return $this->conn->InsertGym($this);
+        return cbdd::InsertGym($this);
     }
 
     
     public function GetGym_sport()
     {
-        return $this->conn->SelectGym_Sport();
+        return cbdd::SelectGym_Sport();
     }
     public function GetOneGym()
     {
-        return $this->conn->SelectOneGym($this);
+        return cbdd::SelectOneGym($this);
     }
     public function GetOneGym_sport()
     {
-        return $this->conn->SelectOneGym_sport($this);
+        return cbdd::SelectOneGym_sport($this);
     }
     public function MAJParaGym()
     {
-        return $this->conn->UpdateParaGym($this);
+        return cbdd::UpdateParaGym($this);
     }
     public function SuppOneGym_sport()
     {
-        return $this->conn->DelOneGym_sport($this);
+        return cbdd::DelOneGym_sport($this);
     }
     public function AddGym_sport()
     {
-        return $this->conn->InsertGym_sport($this);
+        return cbdd::InsertGym_sport($this);
     }
     public function getddlgym($selectedGymId)
     {
@@ -165,7 +165,7 @@ class cGymnase
             $selectedGymId = 0;
         }
         $gymList = array();
-        $result = $this->conn->SelectNamGym();
+        $result = cbdd::SelectNamGym();
         while ($row = $result->fetch_assoc()) {
             $gymList[] = $row;
         }
