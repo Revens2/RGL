@@ -98,6 +98,7 @@ class cReservation
 
     public function __construct()
     {
+        cbdd::init();
     }
 
     public function AjoutReservation ()
