@@ -155,6 +155,18 @@ private static string $dbname = "rgl";
 
     #region cGymnase
 
+    public static function SelectGym()
+    {
+        return self::ExecuteSelected("SELECT Id_Gymnase, Nom, Coordonnees_latitude, Coordonnees_longitude, Adresse, Ville, Zip FROM gymnase");
+
+    }
+
+    public static function SelectGym_Sport()
+    {
+        return self::ExecuteSelected("SELECT Id_Gymnase, Id_Sport FROM gymnase_sport");
+
+    }
+
     public static function SelectOneGym($cGymnase)
     {
         $sql = "SELECT * FROM gymnase WHERE Id_Gymnase = ?";
@@ -204,6 +216,52 @@ private static string $dbname = "rgl";
         $stmt->store_result();
         return $stmt;
     }
+
+    #endregion
+
+    #region cSport
+
+    public static function SelectSport()
+    {
+        return self::ExecuteSelected("SELECT Id_Sport, Nom_du_sport FROM sport");
+        ;
+    }
+
+
+
+    public static function SelectAllSport()
+    {
+        return self::ExecuteSelected("SELECT * FROM sport");
+
+    }
+
+    public static function AddSport($cSport)
+    {
+        $sql = "INSERT INTO sport (Nom_du_sport, Collectif) VALUES (?, ?)";
+        $stmt = self::$conn->prepare($sql);
+
+        $nomSport = $cSport->getName();
+        $collectif = $cSport->getCollec();
+
+        $stmt->bind_param("si", $nomSport, $collectif);
+        $stmt->execute();
+        $stmt->store_result();
+        return $stmt;
+    }
+
+    public static function SelectDdlSport($selectedGymId)
+    {
+        $sql = "SELECT DISTINCT s.id_sport, s.nom_du_sport FROM sport s JOIN gymnase_sport g ON s.id_sport = g.Id_Sport WHERE g.Id_Gymnase = ?";
+        $stmt = self::$conn->prepare($sql);
+
+        $gymId = $selectedGymId;
+
+        $stmt->bind_param("i", $gymId);
+        $stmt->execute();
+        $stmt->store_result();
+        return $stmt;
+        }
+
 
     #endregion
 
