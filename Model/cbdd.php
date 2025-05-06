@@ -297,8 +297,8 @@ private static string $dbname = "rgl";
 
         $stmt->bind_param("i", $userId);
         $stmt->execute();
-        $stmt->store_result();
-        return $stmt;
+        $result = $stmt->get_result();
+        return $result;
     }
 
      public static function SelectUserValidation()
@@ -327,8 +327,8 @@ private static string $dbname = "rgl";
 
         $stmt->bind_param("i", $resaid);
         $stmt->execute();
-        $stmt->store_result();
-        return $stmt;
+        $result = $stmt->get_result();
+        return $result;
     }
 
      public static function UpdateValidation($cReservation)

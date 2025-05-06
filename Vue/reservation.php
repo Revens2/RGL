@@ -47,7 +47,7 @@
         <?php if ($editGymData): ?>
          <div id="paraModal" class="modal" style="display: block;">
         <div class="modal-content">
-        <form method="POST" action="../Controleur/validation.php" style="float:right;">
+        <form method="POST" action="../Controleur/reservation.php" style="float:right;">
       <input type="hidden" name="action" value="closepopup">
       <button type="submit" class="close2">&times;</button>
     </form>
