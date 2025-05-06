@@ -167,6 +167,9 @@ class cUtilisateur
             $query = cbdd::SelectLogin($this);
              
             if ($query->num_rows == 1) {
+                $userid = 0;
+                $isClient = 0;
+                $isAdmin = 0;
                 $query->bind_result($userid, $isClient, $isAdmin);
                 $query->fetch();
 

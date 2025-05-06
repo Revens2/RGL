@@ -11,6 +11,7 @@ $sport = new cSport();
 $editGymData = null;
 $selectedGymId = null;
 $selectedSportId = null;
+$resaid = null;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['refresh'])) {
@@ -25,10 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $cReservation->SuppReservation();
         } elseif ($action == 'openresaedit') {
             $cReservation->setResaid(isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null);
+            $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;
             $editGymData = $cReservation->getReservationDetails();
         } elseif ($action == 'saveedit') {
-
-            $cReservation->setResaid(isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null);
+            $cReservation->SetResaid(isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation']: null);
             $cReservation->setGymId(isset($_POST['gym_id']) ? (int) $_POST['gym_id'] : null);
             $cReservation->setSportId(isset($_POST['sport_id']) ? (int) $_POST['sport_id'] : null);
             $cReservation->setDateDebut(isset($_POST['datedebut']) ? $_POST['datedebut'] : null);

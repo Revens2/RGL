@@ -176,8 +176,50 @@ private static string $dbname = "rgl";
 
         $stmt->bind_param("i", $gymId);
         $stmt->execute();
-        $stmt->store_result();
-        return $stmt;
+        $result = $stmt->get_result();
+        return $result;
+    }
+
+    public static function SelectNamGym()
+    {
+        return self::ExecuteSelected("SELECT Id_Gymnase, Nom FROM gymnase ");
+
+    }
+
+    public static function SelectOneGym_sport($cGymnase)
+    {
+        $sql = "SELECT Id_Sport FROM gymnase_sport WHERE Id_Gymnase = ?";
+        $stmt = self::$conn->prepare($sql);
+        $gymid = $cGymnase->GetGymId();
+        $stmt->bind_param("i", $gymid);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result;
+
+    }
+
+    public static function DelOneGym_sport($cGymnase)
+    {
+        $sql = "DELETE FROM gymnase_sport WHERE Id_Gymnase =?";
+        $stmt = self::$conn->prepare($sql);
+        $gymid = $cGymnase->GetGymId();
+        $stmt->bind_param("i", $gymid);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result;
+
+    }
+    public static function InsertGym_sport($cGymnase, )
+    {
+        $sql = "INSERT INTO gymnase_sport (Id_Gymnase, Id_Sport) VALUES ( ?, ?) ";
+        $stmt = self::$conn->prepare($sql);
+        $gymid = $cGymnase->GetGymId();
+        $sportId = $cGymnase->GetSportId();
+        $stmt->bind_param("ii", $gymid, $sportId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result;
+
     }
 
     public static function InsertGym($cGymnase)
@@ -258,8 +300,8 @@ private static string $dbname = "rgl";
 
         $stmt->bind_param("i", $gymId);
         $stmt->execute();
-        $stmt->store_result();
-        return $stmt;
+        $result = $stmt->get_result();
+        return $result;
         }
 
 
@@ -309,7 +351,7 @@ private static string $dbname = "rgl";
 
      public static function SelectUserHistorique($cReservation)
     {
-        $sql = "SELECT r.Id_reservation, r.Date_debut, r.Date_fin, s.Nom_du_sport, g.nom, r.Commentaire FROM reservation r JOIN sport s ON s.Id_Sport = r.Id_Sport JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase WHERE Id_Utilisateur = ? and statut = 0";
+        $sql = "SELECT r.Id_reservation, r.Date_debut, r.Date_fin, s.Nom_du_sport, g.nom, r.Commentaire FROM reservation r JOIN sport s ON s.Id_Sport = r.Id_Sport JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase WHERE Id_Utilisateur = ? and statut = 0 or statut = 4";
         $stmt = self::$conn->prepare($sql);
         $userId = $cReservation->getUserId();
 
@@ -339,7 +381,7 @@ private static string $dbname = "rgl";
         $resaid = $cReservation->GetResaid();
         $valid = $cReservation->GetValid();
 
-        $stmt->bind_param("ii", $resaid, $valid);
+        $stmt->bind_param("ii", $valid, $resaid);
         $stmt->execute();
         $stmt->store_result();
         return $stmt;

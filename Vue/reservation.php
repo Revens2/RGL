@@ -54,7 +54,7 @@
             <h2>Modifier la Réservation</h2>
             <form method="POST" action="reservation.php">
                 <input type="hidden" name="action" value="saveedit">
-                <input type="hidden" name="Id_reservation" value="<?php echo htmlspecialchars($resaid); ?>">
+                <input type="hidden" name="Id_reservation" value="<?php echo htmlspecialchars($_POST['Id_reservation'] ?? $editGymData['Id_reservation'] ?? ''); ?>">
 
                 <!-- GYM -->
                 <label for="gymSelect">Gymnase :</label>
@@ -112,7 +112,7 @@
                 >
                 <br><br>
 
-                <input type="submit" name="saveedit" value="Confirmer la réservation">
+                <input type="submit" name="saveedit" value="Confirmer la modification">
             </form>
             </div>
       </div>
