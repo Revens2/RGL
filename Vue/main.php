@@ -209,7 +209,7 @@
     <div id="paraModal" class="modal" style="display: block;">
         <div class="modal-content">
             <span id="closeParaModal" class="close">&times;</span>
-            <form method="POST" action="../Controleur/main.php">
+            <form method="POST" action="../Controleur/main.php" style="display: inline-block; margin-right: 10px;">
                 <input type="hidden" name="action" value="parametre">
                 <input type="hidden" name="paragymid" value="<?php echo $editGymData['Id_Gymnase']; ?>">
 
@@ -300,13 +300,13 @@
                     <?php echo htmlspecialchars($sportItem['Nom_du_sport']); ?><br>
                 <?php endforeach; ?>
 
-                <input type="submit" value="Modifier le gymnase">
+                <input type="submit" value="Modifier le gymnase" style="margin-left:55px;">
                 
             </form>
-            <form method="POST" action="main.php" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce gymnase ?');" style="display:inline;">
+            <form method="POST" action="main.php" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce gymnase ?');" style="display: inline-block; margin-right: 10px;">
                         <input type="hidden" name="action" value="delete">
                         <input type="hidden" name="Id_Gymnase" value="<?php echo $editGymData['Id_Gymnase']; ?>">
-                        <input type="submit" class="btn btn-delete" value="Supprimer">
+                        <input type="submit" class="btn btn-delete" value="Supprimer" style="margin-left:-45px; width:150px;">
              </form>
         </div>
     </div>
