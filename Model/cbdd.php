@@ -259,6 +259,21 @@ private static string $dbname = "rgl";
         return $stmt;
     }
 
+    public static function DeleteGymnase($cGymnase)
+    {
+        $sql = "DELETE FROM Gymnase WHERE Id_Gymnase = ?";
+        $stmt = self::$conn->prepare($sql);
+
+        $gymid = $cGymnase->getGymId();
+
+        $stmt->bind_param("i", $gymid);
+        $stmt->execute();
+        $stmt->store_result();
+        return $stmt;
+    }
+
+    
+
     #endregion
 
     #region cSport

@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             while ($row = $result->fetch_assoc()) {
                 $associatedSports[] = $row['Id_Sport'];
 
-                
+
 
             }
         } elseif ($action == 'parametre') {
@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } elseif ($action == 'add_gymnase') {
             $cGymnase->setGymname(isset($_POST['nom']) ? $_POST['nom'] : null);
             $cGymnase->setLatitude(isset($_POST['latitude']) ? $_POST['latitude'] : null);
-            $cGymnase->setLongitude(isset($_POST['longitude']) ?  $_POST['longitude'] : null);
+            $cGymnase->setLongitude(isset($_POST['longitude']) ? $_POST['longitude'] : null);
             $cGymnase->setAdresse(isset($_POST['tbadresse']) ? $_POST['tbadresse'] : null);
             $cGymnase->setVille(isset($_POST['ville']) ? $_POST['ville'] : null);
             $cGymnase->setZip(isset($_POST['zip']) ? (int) $_POST['zip'] : null);
@@ -123,7 +123,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo "Le gymnase a bien été ajouté !";
             header("Location: ../Vue/main.php");
             exit();
-            
+
+        } elseif ($action == 'delete') {
+
+            $cGymnase->setGymId(isset($_POST['Id_Gymnase']) ? (int) $_POST['Id_Gymnase'] : null);
+            $cGymnase->SuppGym();
+            echo "Le gymnase a bien été supprimé !";
+            header("Location: ../Vue/main.php");
+            exit();
         }
     }
 }

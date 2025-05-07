@@ -301,7 +301,13 @@
                 <?php endforeach; ?>
 
                 <input type="submit" value="Modifier le gymnase">
+                
             </form>
+            <form method="POST" action="main.php" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce gymnase ?');" style="display:inline;">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="Id_Gymnase" value="<?php echo $editGymData['Id_Gymnase']; ?>">
+                        <input type="submit" class="btn btn-delete" value="Supprimer">
+             </form>
         </div>
     </div>
 <?php endif; ?>

@@ -177,5 +177,11 @@ class cGymnase
         $dropdown .= '</select>';
         return $dropdown;
     }
+
+    public function SuppGym()
+    {
+         cbdd::DeleteGymnase($this);
+    }
+    
 }
 ?>
