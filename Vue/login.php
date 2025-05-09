@@ -9,7 +9,7 @@
 <body>
     <div class="container">
         <header>
-            <img src="../icons/RGL.png" alt="Logo">
+            <img src="/icons/RGL.png" alt="Logo">
             <h1>Connexion</h1>
         </header>
         <?php if ($errormsg):?>
