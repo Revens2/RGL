@@ -59,7 +59,7 @@ $dt = $cReservation->getUserReservations();
 $finalRows = [];
 while ($row = $dt->fetch_assoc()) {
     if ($row['statut'] == 1) {
-        $row['statut'] = "../icons/termine.png";
+        $row['statut'] = "../icons/enregistre.png";
     } elseif ($row['statut'] == 2) {
         $row['statut'] = "../icons/accepte.png";
     } elseif ($row['statut'] == 3) {
