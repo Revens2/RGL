@@ -8,7 +8,7 @@
 <body>
     <div class="container">
         <header>
-            <img src="../icons/RGL.png" alt="Logo">
+            <img src="/icons/RGL.png" alt="Logo">
             <h1>Créer un compte utilisateur</h1>
         </header>
 

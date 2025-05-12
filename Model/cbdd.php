@@ -253,7 +253,7 @@ private static string $dbname = "rgl";
         $zip = $cGymnase->getZip();
         $gymId = $cGymnase->getGymId();
 
-        $stmt->bind_param("siissii", $nom, $latitude, $longitude, $adresse, $ville, $zip, $gymId);
+        $stmt->bind_param("sssssii", $nom, $latitude, $longitude, $adresse, $ville, $zip, $gymId);
         $stmt->execute();
         $stmt->store_result();
         return $stmt;
