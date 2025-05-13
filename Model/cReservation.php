@@ -153,11 +153,6 @@ class cReservation
     {
         cbdd::UpdateReservation($this);
     }
-
-    public function SuppReservation()
-    {
-        cbdd::DeleteReservation($this);
-    }
     public function GetValidReservation()
     {
         $editGymData = null;

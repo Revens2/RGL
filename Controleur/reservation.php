@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $action = $_POST['action'];
         if ($action == 'supp') {
             $cReservation->setResaid(isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null);
-            $cReservation->SuppReservation();
+            $cReservation->cancelReservation();
         } elseif ($action == 'openresaedit') {
             $cReservation->setResaid(isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null);
             $resaid = isset($_POST['Id_reservation']) ? (int) $_POST['Id_reservation'] : null;

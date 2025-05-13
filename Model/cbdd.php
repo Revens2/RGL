@@ -433,19 +433,6 @@ private static string $dbname = "rgl";
         return $stmt;
     }
 
-    public static function DeleteReservation($cReservation)
-    {
-        $sql = "DELETE FROM reservation WHERE Id_reservation = ?";
-        $stmt = self::$conn->prepare($sql);
-
-        $resaId = $cReservation->GetResaid();
-
-        $stmt->bind_param("i", $resaId);
-        $stmt->execute();
-        $stmt->store_result();
-        return $stmt;
-    }
-
     public static function SelectValidReservation($cReservation)
     {
         $sql = "SELECT r.Id_reservation, r.Date_debut, r.Date_fin, r.statut, r.Commentaire, g.Nom, s.Nom_du_sport FROM reservation r JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase JOIN sport s ON s.Id_Sport = r.Id_Sport WHERE Id_reservation = ?";
