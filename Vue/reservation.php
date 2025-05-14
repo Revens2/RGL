@@ -15,11 +15,14 @@
     <div class="container">
         <h1>Mes Réservations</h1>
          
-        <?php if (!empty($error)): ?>
-                    <p style="color:red;">
-                        <?php echo htmlspecialchars($error); ?>
-                    </p>
-                <?php endif; ?>
+<?php
+if (!empty($error)):
+    ?>
+    <p style="color:red;">
+        <?php echo $error; ?>
+    </p>
+<?php endif; ?>
+
         <table>
             <tr>
                 <th>Statut</th>
@@ -126,6 +129,8 @@
       </div>
     </div>
         <?php endif; ?>
+    
+   
     
       <?php require_once '../Vue/footer.php'; ?>
 

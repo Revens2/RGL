@@ -44,24 +44,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($startTime === false || $endTime === false) {
                 $errorMsg = "Les dates saisies ne sont pas valides.";
-                
+                header("Location: ../Vue/reservation.php?error=" . urlencode($errorMsg));
             }
 
             if ($endTime <= $startTime) {
-                $errorMsg = "La date de fin doit être strictement postérieure à la date de début.";
-                
+                $errorMsg = "La date de fin doit etre strictement posterieure a la date de debut.";
+                header("Location: ../Vue/reservation.php?error=" . urlencode($errorMsg));
             }
 
             if (strpos($commentaire, '<') !== false || strpos($commentaire, '>') !== false) {
-                $errorMsg = "Les chevrons < et > ne sont pas autorisés dans le commentaire.";
-               
+                $errorMsg = "Les chevrons < et > ne sont pas autorises dans le commentaire.";
+                header("Location: ../Vue/reservation.php?error=" . urlencode($errorMsg));
             }
 
             $row = $cReservation->Verifresaexiste();
 
 
             if ($row['count'] > 0) {
-                $errorMsg = "Une reservation existe deja pour cette période. Veuillez recommencer une reservation";
+                $errorMsg = "Une reservation existe deja pour cette periode. Veuillez recommencer une reservation";
                 header("Location: ../Vue/reservation.php?error=" . urlencode($errorMsg));
                 
             } else {
@@ -85,9 +85,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-if (!empty($_GET['error'])) {
-    $error = $_GET['error'];
-}
 
 $cReservation->SetUserId($cUtilisateur->GetUserId());
 $dt = $cReservation->getUserReservations();
