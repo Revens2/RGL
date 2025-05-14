@@ -104,7 +104,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 exit;
             }
 
-            $cReservation->AjoutReservation();
+            $row = $cReservation->Verifresaexiste(); 
+            
+
+            if ($row['count'] > 0) {
+                $errorMsg = "Une réservation existe déjà pour cette période. Veuillez recommencer une reservation";
+                header("Location: ../Vue/main.php?error=" . urlencode($errorMsg) . "&showResaModal=1");
+                exit;
+            }else {
+                $cReservation->AjoutReservation();
+            }
 
         } elseif ($action == 'add_sport') {
             $cSport->setName(isset($_POST['sport_nom']) ? $_POST['sport_nom'] : null);

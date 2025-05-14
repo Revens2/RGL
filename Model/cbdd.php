@@ -446,5 +446,23 @@ private static string $dbname = "rgl";
         return $result;
     }
 
+    public static function CheckResa($cReservation)
+    {
+
+        $sql = "SELECT COUNT(*) as count FROM reservation WHERE Id_Gymnase = ? AND Id_Sport = ? AND statut IN (2, 3) AND Date_debut < ? AND Date_fin > ?";
+        $gymId = $cReservation->GetGymId();
+        $sportId = $cReservation->GetSportId();
+        $dateDebut = substr($cReservation->GetDateDebut(), 0, 10); 
+        $dateFin = substr($cReservation->GetDateFin(), 0, 10);     
+        $stmt = self::$conn->prepare($sql);
+
+        $stmt->bind_param("iiss", $gymId, $sportId, $dateFin, $dateDebut);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $dt = $result->fetch_assoc();
+        return $dt;
+    }
+    
+
 }
 ?>

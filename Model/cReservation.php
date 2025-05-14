@@ -101,9 +101,14 @@ class cReservation
         cbdd::init();
     }
 
-    public function AjoutReservation ()
+    public function AjoutReservation()
     {
          return cbdd::addReservation($this);
+    }
+
+    public function Verifresaexiste()
+    {
+        return cbdd::CheckResa($this);
     }
 
     public function getUserReservations()
