@@ -3,15 +3,23 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gestion des Projets</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <?php require_once 'menu.php'; ?>
+   
 
     <div class="container">
         <h1>Mes Réservations</h1>
-
+         
+        <?php if (!empty($error)): ?>
+                    <p style="color:red;">
+                        <?php echo htmlspecialchars($error); ?>
+                    </p>
+                <?php endif; ?>
         <table>
             <tr>
                 <th>Statut</th>

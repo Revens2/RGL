@@ -51,6 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
             }
+            header("Location: ../Vue/main.php");
+            exit();
         } elseif ($action == 'parametre') {
             $cGymnase->setGymId(isset($_POST['paragymid']) ? (int) $_POST['paragymid'] : null);
             $cGymnase->setGymname(isset($_POST['paranom']) ? $_POST['paranom'] : null);
@@ -88,19 +90,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($startTime === false || $endTime === false) {
                 $errorMsg = "Les dates saisies ne sont pas valides.";
-                header("Location: ../Vue/main.php?error=" . urlencode($errorMsg) . "&showResaModal=1");
+                header("Location: ../Vue/main.php?error=" . urlencode($errorMsg));
                 exit;
             }
 
             if ($endTime <= $startTime) {
                 $errorMsg = "La date de fin doit être strictement postérieure à la date de début.";
-                header("Location: ../Vue/main.php?error=" . urlencode($errorMsg) . "&showResaModal=1");
+                header("Location: ../Vue/main.php?error=" . urlencode($errorMsg));
                 exit;
             }
 
             if (strpos($commentaire, '<') !== false || strpos($commentaire, '>') !== false) {
                 $errorMsg = "Les chevrons < et > ne sont pas autorisés dans le commentaire.";
-                header("Location: ../Vue/main.php?error=" . urlencode($errorMsg) . "&showResaModal=1");
+                header("Location: ../Vue/main.php?error=" . urlencode($errorMsg) );
                 exit;
             }
 
@@ -109,10 +111,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($row['count'] > 0) {
                 $errorMsg = "Une réservation existe déjà pour cette période. Veuillez recommencer une reservation";
-                header("Location: ../Vue/main.php?error=" . urlencode($errorMsg) . "&showResaModal=1");
+                header("Location: ../Vue/main.php?error=" . urlencode($errorMsg) );
                 exit;
             }else {
                 $cReservation->AjoutReservation();
+                header("Location: ../Vue/main.php");
+                exit();
             }
 
         } elseif ($action == 'add_sport') {

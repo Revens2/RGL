@@ -26,7 +26,11 @@
                 <button id="btnOpengymModal">Ajouter un gymnase</button>
             <?php endif; ?>
         </div>
-
+        <?php if (!empty($error)): ?>
+                    <p style="color:red;">
+                        <?php echo htmlspecialchars($error); ?>
+                    </p>
+                <?php endif; ?>
         <div id="map"></div>
         <!--popup ajout gymnase-->
         <div id="gymModal" class="modal">
@@ -133,11 +137,7 @@
                 <span id="closeResaModal" class="close">&times;</span>
                 <h2>Réserver un gymnase</h2>
 
-                <?php if (!empty($error)): ?>
-                    <p style="color:red;">
-                        <?php echo htmlspecialchars($error); ?>
-                    </p>
-                <?php endif; ?>
+               
 
                 <form method="POST" action="../Controleur/main.php">
                     <input type="hidden" name="action" value="add_reservation" />
