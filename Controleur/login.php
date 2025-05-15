@@ -3,6 +3,7 @@ session_start();
 require_once '../Model/cUtilisateur.php';
 $connect = new cUtilisateur();
 
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $connect->setMail($_POST['email']) ;
     $connect->setMdp($_POST['password']);
