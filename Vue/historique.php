@@ -10,9 +10,8 @@
     <?php require_once 'menu.php'; ?>
 
     <div class="container">
-        <h1>Mes Réservations</h1>
 
-        <h2>Historique de vos Réservations</h2>
+        <h1>Historique de vos Réservations</h1>
         <table>
             <tr>
                 <th>Sport</th>
@@ -33,8 +32,7 @@
             <?php endforeach; ?>
         </table>
 
-    
+     <?php require_once '../Vue/footer.php'; ?>
     </div>
-    <?php require_once 'footer.hmtl'; ?>
 </body>
 </html>

@@ -33,27 +33,27 @@ class cSport
     }
     public function __construct()
     {
-        $this->conn = new cbdd();
+       cbdd::init();
 
     }
     public function GetSport()
     {
  
-        return $this->conn->SelectSport();
+        return cbdd::SelectSport();
     }
 
     public function GetGym_sport()
     {
-         return $this->conn->SelectGym_Sport();
+         return cbdd::SelectGym_Sport();
     }
 
     public function GetAllSport()
     {
-        return $this->conn->SelectAllSport();
+        return cbdd::SelectAllSport();
     }
     public function AjoutSport()
     {
-        return $this->conn->AddSport($this);
+        return cbdd::AddSport($this);
 
     }
     public function getddlsport($selectedGymId, $selectedSportId = null)
@@ -64,7 +64,7 @@ class cSport
 
         $SportList = [];
         
-        $result = $this->conn->SelectDdlSport($selectedGymId);
+        $result = cbdd::SelectDdlSport($selectedGymId);
 
         while ($row = $result->fetch_assoc()) {
             $SportList[] = $row;

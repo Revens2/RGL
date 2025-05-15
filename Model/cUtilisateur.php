@@ -3,7 +3,6 @@ require_once '../Model/cbdd.php';
 class cUtilisateur
 {
 
-    private $conn;
     private string $mail = '';
     private string $mdp = '';
     private int $userid = 0;
@@ -140,11 +139,11 @@ class cUtilisateur
 
     public function __construct()
     {
-        $this->conn = new cbdd();
+       cbdd::init();
 
         if($this->isAuthenticated()){
             $this->SetUserId($_SESSION['user_id']);
-            $result = $this->conn->SelectUser($this);
+            $result = cbdd::SelectUser($this);
 
             if ($result && $result->num_rows > 0) {
                 $row = $result->fetch_assoc();
@@ -165,9 +164,12 @@ class cUtilisateur
 
  public function login()
     {
-            $query = $this->conn->SelectLogin($this);
+            $query = cbdd::SelectLogin($this);
              
             if ($query->num_rows == 1) {
+                $userid = 0;
+                $isClient = 0;
+                $isAdmin = 0;
                 $query->bind_result($userid, $isClient, $isAdmin);
                 $query->fetch();
 
@@ -185,7 +187,7 @@ class cUtilisateur
 
 
      public function account() {
-        $query = $this->conn->SelectAccount($this);
+        $query = cbdd::SelectAccount($this);
         $result = $query;
         $userData = $result->fetch_assoc();
         return $userData;
@@ -194,16 +196,16 @@ class cUtilisateur
     public function AJoutAccount()
     {
         $this->setMdp(md5($this->mdp));
-        $this->conn->AddAccount($this);
+        cbdd::AddAccount($this);
     }
 
     public function ModifAccount()
     {
-        $this->conn->UpdateAccount($this);
+        cbdd::UpdateAccount($this);
     }
 
      public function VerifAccount()
     {
-        return $this->conn->SelectEmail($this);
+        return cbdd::SelectEmail($this);
     }
 }

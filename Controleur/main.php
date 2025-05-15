@@ -48,9 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             while ($row = $result->fetch_assoc()) {
                 $associatedSports[] = $row['Id_Sport'];
 
-                
+
 
             }
+            header("Location: ../Vue/main.php");
+            exit();
         } elseif ($action == 'parametre') {
             $cGymnase->setGymId(isset($_POST['paragymid']) ? (int) $_POST['paragymid'] : null);
             $cGymnase->setGymname(isset($_POST['paranom']) ? $_POST['paranom'] : null);
@@ -77,34 +79,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
         } elseif ($action == 'add_reservation') {
-            $cGymnase->setGymId(isset($_POST['gymeid']) ? (int) $_POST['gymeid'] : null);
-            $cGymnase->setUserId(isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : null);
-            $cGymnase->setSportId(isset($_POST['sport']) ? (int) $_POST['sport'] : null);
-            $cGymnase->setDateDebut(isset($_POST['datedebut']) ? $_POST['datedebut'] : null);
-            $cGymnase->setDateFin(isset($_POST['datefin']) ? $_POST['datefin'] : null);
-            $cGymnase->setCommentaire(isset($_POST['commentaire']) ? $_POST['commentaire'] : '');
-            $startTime = strtotime($dateDebut);
-            $endTime = strtotime($dateFin);
+            $cReservation->setGymId(isset($_POST['gymeid']) ? (int) $_POST['gymeid'] : null);
+            $cReservation->setUserId(isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : null);
+            $cReservation->setSportId(isset($_POST['sport']) ? (int) $_POST['sport'] : null);
+            $cReservation->setDateDebut(isset($_POST['datedebut']) ? $_POST['datedebut'] : null);
+            $cReservation->setDateFin(isset($_POST['datefin']) ? $_POST['datefin'] : null);
+            $cReservation->setCommentaire(isset($_POST['commentaire']) ? $_POST['commentaire'] : '');
+            $startTime = strtotime(isset($_POST['datedebut']) ? $_POST['datedebut'] : null);
+            $endTime = strtotime(isset($_POST['datefin']) ? $_POST['datefin'] : null);
 
             if ($startTime === false || $endTime === false) {
                 $errorMsg = "Les dates saisies ne sont pas valides.";
-                header("Location: ../Vue/main.php?error=" . urlencode($errorMsg) . "&showResaModal=1");
+                header("Location: ../Vue/main.php?error=" . urlencode($errorMsg));
                 exit;
             }
 
             if ($endTime <= $startTime) {
                 $errorMsg = "La date de fin doit être strictement postérieure à la date de début.";
-                header("Location: ../Vue/main.php?error=" . urlencode($errorMsg) . "&showResaModal=1");
+                header("Location: ../Vue/main.php?error=" . urlencode($errorMsg));
                 exit;
             }
 
             if (strpos($commentaire, '<') !== false || strpos($commentaire, '>') !== false) {
                 $errorMsg = "Les chevrons < et > ne sont pas autorisés dans le commentaire.";
-                header("Location: ../Vue/main.php?error=" . urlencode($errorMsg) . "&showResaModal=1");
+                header("Location: ../Vue/main.php?error=" . urlencode($errorMsg) );
                 exit;
             }
 
-            $cReservation->AjoutReservation();
+            $row = $cReservation->Verifresaexiste(); 
+            
+
+            if ($row['count'] > 0) {
+                $errorMsg = "Une réservation existe déjà pour cette période. Veuillez recommencer une reservation";
+                header("Location: ../Vue/main.php?error=" . urlencode($errorMsg) );
+                exit;
+            }else {
+                $cReservation->AjoutReservation();
+                header("Location: ../Vue/main.php");
+                exit();
+            }
 
         } elseif ($action == 'add_sport') {
             $cSport->setName(isset($_POST['sport_nom']) ? $_POST['sport_nom'] : null);
@@ -114,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } elseif ($action == 'add_gymnase') {
             $cGymnase->setGymname(isset($_POST['nom']) ? $_POST['nom'] : null);
             $cGymnase->setLatitude(isset($_POST['latitude']) ? $_POST['latitude'] : null);
-            $cGymnase->setLongitude(isset($_POST['longitude']) ?  $_POST['longitude'] : null);
+            $cGymnase->setLongitude(isset($_POST['longitude']) ? $_POST['longitude'] : null);
             $cGymnase->setAdresse(isset($_POST['tbadresse']) ? $_POST['tbadresse'] : null);
             $cGymnase->setVille(isset($_POST['ville']) ? $_POST['ville'] : null);
             $cGymnase->setZip(isset($_POST['zip']) ? (int) $_POST['zip'] : null);
@@ -123,7 +136,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo "Le gymnase a bien été ajouté !";
             header("Location: ../Vue/main.php");
             exit();
-            
+
+        } elseif ($action == 'delete') {
+
+            $cGymnase->setGymId(isset($_POST['Id_Gymnase']) ? (int) $_POST['Id_Gymnase'] : null);
+            $cGymnase->SuppGym();
+            echo "Le gymnase a bien été supprimé !";
+            header("Location: ../Vue/main.php");
+            exit();
         }
     }
 }

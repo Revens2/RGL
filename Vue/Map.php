@@ -2,11 +2,11 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    </head>
+    <meta charset="UTF-8" />
+</head>
 <body>
-<script>
-        // Initialisation de la carte Leaflet
+    <script>
+        // Initialisation de la carte
         var map = L.map('map').setView([48.80, 5.68], 8);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -17,18 +17,23 @@
         gymnases.forEach(function(gymnase) {
             var popupContent = `<b>${gymnase.name}</b><br>${gymnase.address}<br>${gymnase.Ville}<br>${gymnase.Zip}`;
 
-            <?php if ($user->GetIsAdmin()): ?>
-                popupContent += `
-                    <form method="POST" action="../Controleur/main.php">
-                        <input type="hidden" name="action" value="edit_gymnase">
-                        <input type="hidden" name="gymid" value="${gymnase.idgym}">
-                        <input type="submit" value="Paramétre">
-                    </form>
-                `;
+            <?php if ($cUtilisateur->GetIsAdmin()): ?>
+                    popupContent += `
+                        <form method="POST" action="../Controleur/main.php">
+                            <input type="hidden" name="action" value="edit_gymnase">
+                            <input type="hidden" name="gymid" value="${gymnase.idgym}">
+                            <input type="submit" value="Paramètres">
+                        </form>
+                    `;
             <?php endif; ?>
+            <?php if ($cUtilisateur->GetIsClient()): ?>
+              if (gymnase.sports && gymnase.sports.length > 0) {
 
-            <?php if ($user->GetIsClient()): ?>
-                popupContent += `<br><button class="btnReserver" data-name="${gymnase.name}" data-idgym="${gymnase.idgym}">Réserver</button>`;
+                    popupContent += `<br><button class="btnReserver" data-name="${gymnase.name}" data-idgym="${gymnase.idgym}">Réserver</button>`;
+            }else{
+        popupContent += `<br>
+    <label>Aucun sport disponible pour ce gymnase.</label>`;
+        }
             <?php endif; ?>
 
             L.marker([gymnase.latitude, gymnase.longitude])
@@ -68,9 +73,7 @@
                         sportsContainer.appendChild(label);
                         sportsContainer.appendChild(document.createElement('br'));
                     });
-                } else {
-                    sportsContainer.innerHTML = 'Aucun sport disponible pour ce gymnase.';
-                }
+                } 
 
                 document.getElementById('resaModal').style.display = "block";
             }
@@ -80,7 +83,6 @@
                 document.getElementById('resaModal').style.display = "none";
             }
 
-            // Cliquer é l'extérieur pour fermer
             window.addEventListener('click', function(event) {
                 if (event.target == document.getElementById('resaModal')) {
                     document.getElementById('resaModal').style.display = "none";
@@ -89,61 +91,61 @@
         });
 
         // Si admin, gére l'ouverture/fermeture de la modale gymnase
-        <?php if ($user->GetIsAdmin()): ?>
-            var gymModal = document.getElementById("gymModal");
-            var btnOpenGymModal = document.getElementById("btnOpengymModal");
-            var closeGymModal = document.getElementById("closeGymModal");
+        <?php if ($cUtilisateur->GetIsAdmin()): ?>
+                var gymModal = document.getElementById("gymModal");
+                var btnOpenGymModal = document.getElementById("btnOpengymModal");
+                var closeGymModal = document.getElementById("closeGymModal");
 
-            btnOpenGymModal.onclick = function() {
-                gymModal.style.display = "block";
-            }
+                btnOpenGymModal.onclick = function() {
+                    gymModal.style.display = "block";
+                }
 
-            closeGymModal.onclick = function() {
-                gymModal.style.display = "none";
-            }
-
-            window.addEventListener('click', function(event) {
-                if (event.target == gymModal) {
+                closeGymModal.onclick = function() {
                     gymModal.style.display = "none";
                 }
-            });
 
-            // Modale sport
-            var sportModal = document.getElementById("sportModal");
-            var btnOpenSportModal = document.getElementById("btnOpensportModal");
-            var closeSportModal = document.getElementById("closesportModal");
+                window.addEventListener('click', function(event) {
+                    if (event.target == gymModal) {
+                        gymModal.style.display = "none";
+                    }
+                });
 
-            btnOpenSportModal.onclick = function() {
-                sportModal.style.display = "block";
-            }
+                // Modale sport
+                var sportModal = document.getElementById("sportModal");
+                var btnOpenSportModal = document.getElementById("btnOpensportModal");
+                var closeSportModal = document.getElementById("closesportModal");
 
-            closeSportModal.onclick = function() {
-                sportModal.style.display = "none";
-            }
+                btnOpenSportModal.onclick = function() {
+                    sportModal.style.display = "block";
+                }
 
-            window.addEventListener('click', function(event) {
-                if (event.target == sportModal) {
+                closeSportModal.onclick = function() {
                     sportModal.style.display = "none";
                 }
-            });
+
+                window.addEventListener('click', function(event) {
+                    if (event.target == sportModal) {
+                        sportModal.style.display = "none";
+                    }
+                });
         <?php endif; ?>
 
         // Si on doit afficher la modale de paramétrage (pour modification)
         <?php if ($showEditModal): ?>
-            var paraModal = document.getElementById("paraModal");
-            var closeParaModal = document.getElementById("closeParaModal");
+                var paraModal = document.getElementById("paraModal");
+                var closeParaModal = document.getElementById("closeParaModal");
 
-            closeParaModal.onclick = function() {
-                paraModal.style.display = "none";
-            }
-
-            window.addEventListener('click', function(event) {
-                if (event.target == paraModal) {
+                closeParaModal.onclick = function() {
                     paraModal.style.display = "none";
                 }
-            });
+
+                window.addEventListener('click', function(event) {
+                    if (event.target == paraModal) {
+                        paraModal.style.display = "none";
+                    }
+                });
         <?php endif; ?>
     </script>
 
-    </body>
+</body>
 </html>

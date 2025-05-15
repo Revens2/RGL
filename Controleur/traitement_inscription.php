@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $query = $connect->VerifAccount();
     if ($query->num_rows==0){
         $connect->AJoutAccount();
-        header("Location: ../Vue/login.html");
+        header("Location: ../Vue/login.php");
     }else{
         echo "Email déjà existant.";
     }

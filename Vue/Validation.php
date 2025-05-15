@@ -68,7 +68,7 @@ error_reporting(E_ALL);
           <h2>Modifier la Réservation</h2>
           <form method="POST" action="validation.php">
             <input type="hidden" name="action" value="saveedit">
-            <input type="hidden" name="Id_reservation" value="<?= htmlspecialchars($editGymData['Id_reservation'] ?? '') ?>">
+            <input type="hidden" name="Id_reservation" value="<?= ($_POST['Id_reservation'] ?? $editGymData['Id_reservation'] ?? '') ?>">
 
             <label for="ddlvalid">Validation :</label>
             <select id="ddlvalid" name="ddlvalid">
@@ -137,7 +137,8 @@ error_reporting(E_ALL);
       </div>
     </div>
     <?php endif; ?>
-  
-</body>
 
+   <?php require_once '../Vue/footer.php'; ?>
+
+</body>
 </html>

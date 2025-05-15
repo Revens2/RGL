@@ -1,84 +1,105 @@
 <?php
 class cbdd
 {
-private string $servername = "localhost";
-private string $username = "root";
-private string $password = "root";
-private string $dbname = "rgl";
+private static string $servername = "localhost";
+private static string $username = "root";
+private static string $password = "root";
+private static string $dbname = "rgl";
 
-public $conn;
+ public static $conn;
 
     private function GetServername()
     {
-        return $this->servername;
+        return self ::servername;
     }
 
     private function GetUsername()
     {
-        return $this->username;
+        return self ::username;
     }
 
     private function GetPassword ()
     {
-        return $this->password;
+        return self ::password;
     }
 
     private function GetDbname ()
     {
-        return $this->dbname;
+        return self ::dbname;
     }
 
 
 
     
 
-    public function __construct()
+     public static function init()
     {
-        $this->conn = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
+        SELF ::$conn = new mysqli(SELF ::$servername , self::$username, self::$password, self:: $dbname);
     }
 
 
 
-    public function ExecuteSelected(string $query)
+     public static function ExecuteSelected(string $query)
     {
-        $stmt = $this->conn->prepare("$query");
+        $stmt = self::$conn->prepare("$query");
         $stmt->execute();
         $result = $stmt->get_result();
         return $result;
     }
-    public function ExecuteSelectedtostore(string $query)
+      public static function ExecuteSelectedtostore(string $query)
     {
-        $stmt = $this->conn->prepare("$query");
+        $stmt = self::$conn->prepare("$query");
         $stmt->execute();
         $stmt->store_result();
         return $stmt;
     }
     #regioncUtilisateur
 
-    public function SelectLogin($cUtilisateur)
+    public static function SelectLogin($cUtilisateur)
     {
-        $mail = $cUtilisateur->getEmail();
+        $sql = "SELECT Id_Utilisateur, isClient, isAdmin FROM utilisateur WHERE Email = ? AND Mot_de_Passe = ?";
+        $stmt = self::$conn->prepare($sql);
+
+        $email = $cUtilisateur->getEmail();
         $mdp = $cUtilisateur->getMdp();
-        return $this->ExecuteSelectedtostore("SELECT Id_Utilisateur, isClient, isAdmin FROM utilisateur WHERE Email = '$mail' AND Mot_de_Passe = '$mdp'");
 
+        $stmt->bind_param("ss", $email, $mdp);
+        $stmt->execute();
+        $stmt->store_result();
+        return $stmt;
     }
 
-    public function SelectUser($cUtilisateur)
+    public static function SelectUser($cUtilisateur)
     {
-        $userid = $cUtilisateur->GetUserId();
-        return $this->ExecuteSelected("SELECT isClient, isAdmin FROM utilisateur WHERE Id_Utilisateur = $userid ");
+        $sql = "SELECT isClient, isAdmin FROM utilisateur WHERE Id_Utilisateur = ?";
+        $stmt = self::$conn->prepare($sql);
 
+        $userId = $cUtilisateur->GetUserId();
+
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result;
     }
 
-    public function SelectAccount($cUtilisateur)
-    {  
-        $userid= $cUtilisateur->getUserId();
-        return $this->ExecuteSelected("SELECT Nom, Prenom, Date_de_naissance, Numero_de_telephone, Email, Adresse, Zip, Ville FROM utilisateur WHERE Id_Utilisateur = $userid ");
-
-    }
-
-    public function UpdateAccount($cUtilisateur)
+    public static function SelectAccount($cUtilisateur)
     {
+        $sql = "SELECT Nom, Prenom, Date_de_naissance, Numero_de_telephone, Email, Adresse, Zip, Ville FROM utilisateur WHERE Id_Utilisateur = ?";
+        $stmt = self::$conn->prepare($sql);
+
+        $userId = $cUtilisateur->GetUserId();
+
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result;
+    }
+
+    public static function UpdateAccount($cUtilisateur)
+    {
+        $sql = "UPDATE Utilisateur SET `Nom` = ?, `Prenom` = ?, `Date_de_naissance` = ?, `Numero_de_telephone` = ?, `Adresse`= ?, `Email` = ?, `Ville`= ?, `Zip` = ? WHERE Id_Utilisateur = ?";
+        $stmt = self::$conn->prepare($sql);
+
         $nom = $cUtilisateur->GetNom();
         $prenom = $cUtilisateur->GetPrenom();
         $birth = $cUtilisateur->GetBirth();
@@ -88,240 +109,360 @@ public $conn;
         $ville = $cUtilisateur->GetVille();
         $zip = $cUtilisateur->GetZip();
         $userId = $cUtilisateur->GetUserId();
-        return $this->ExecuteSelected("UPDATE Utilisateur SET `Nom` = '$nom', `Prenom` = '$prenom', `Date_de_naissance` = '$birth', `Numero_de_telephone` = '$tel', `Adresse`= '$adresse', `Email` = '$email', `Ville`= '$ville', `Zip` = '$zip'  WHERE Id_Utilisateur = $userId ");
 
+        $stmt->bind_param("sssisssii", $nom, $prenom, $birth, $tel, $adresse, $email, $ville, $zip, $userId);
+        $stmt->execute();
+        $stmt->store_result();
+        return $stmt;
     }
 
-    public function AddAccount($cUtilisateur)
+    public static function AddAccount($cUtilisateur)
     {
+        $sql = "INSERT INTO `Utilisateur` (`Nom`, `Prenom`, `Date_de_naissance`, `Numero_de_telephone`, `Adresse`, `isClient`, `Email`, `Ville`, `Zip`, `Mot_de_Passe`) VALUES (?,?,?,?,?,?,?,?,?,?)";
+        $stmt = self::$conn->prepare($sql);
+
         $nom = $cUtilisateur->GetNom();
         $prenom = $cUtilisateur->GetPrenom();
         $birth = $cUtilisateur->GetBirth();
         $tel = $cUtilisateur->GetTel();
         $adresse = $cUtilisateur->GetAdresse();
+        $isClient = 1;
         $email = $cUtilisateur->GetEmail();
         $ville = $cUtilisateur->GetVille();
         $zip = $cUtilisateur->GetZip();
-        $hashed = $cUtilisateur->GetMdp();
-        $isClient = 1;
-        return $this->ExecuteSelected("INSERT INTO `Utilisateur` (`Nom`, `Prenom`, `Date_de_naissance`, `Numero_de_telephone`, `Adresse`, `isClient`, `Email`, `Ville`, `Zip`, `Mot_de_Passe`) VALUES ('$nom', '$prenom', '$birth', '$tel', '$adresse','$isClient','$email', '$ville', '$zip','$hashed')");
+        $mdp = $cUtilisateur->GetMdp();
 
+        $stmt->bind_param("sssisissis", $nom, $prenom, $birth, $tel, $adresse, $isClient, $email, $ville, $zip, $mdp);
+        $stmt->execute();
+        $stmt->store_result();
+        return $stmt;
     }
 
-    public function SelectEmail($cUtilisateur)
+    public static function SelectEmail($cUtilisateur)
     {
+        $sql = "select Email from utilisateur where email = ?";
+        $stmt = self::$conn->prepare($sql);
+
         $email = $cUtilisateur->GetEmail();
-        return $this->ExecuteSelected("select Email from utilisateur where email = '$email' ");
 
-    }
-    #regioncGymnase
-
-
-    public function SelectGym()
-    {
-        return $this->ExecuteSelected("SELECT Id_Gymnase, Nom, Coordonnees_latitude, Coordonnees_longitude, Adresse, Ville, Zip FROM gymnase");
-
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->store_result();
+        return $stmt;
     }
 
-    public function SelectGym_Sport()
+    #endregion
+
+    #region cGymnase
+
+    public static function SelectGym()
     {
-        return $this->ExecuteSelected("SELECT Id_Gymnase, Id_Sport FROM gymnase_sport");
+        return self::ExecuteSelected("SELECT Id_Gymnase, Nom, Coordonnees_latitude, Coordonnees_longitude, Adresse, Ville, Zip FROM gymnase");
 
     }
 
-    public function SelectOneGym($cGymnase)
+    public static function SelectGym_Sport()
     {
+        return self::ExecuteSelected("SELECT Id_Gymnase, Id_Sport FROM gymnase_sport");
+
+    }
+
+    public static function SelectOneGym($cGymnase)
+    {
+        $sql = "SELECT * FROM gymnase WHERE Id_Gymnase = ?";
+        $stmt = self::$conn->prepare($sql);
+
+        $gymId = $cGymnase->GetGymId();
+
+        $stmt->bind_param("i", $gymId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result;
+    }
+
+    public static function SelectNamGym()
+    {
+        return self::ExecuteSelected("SELECT Id_Gymnase, Nom FROM gymnase ");
+
+    }
+
+    public static function SelectOneGym_sport($cGymnase)
+    {
+        $sql = "SELECT Id_Sport FROM gymnase_sport WHERE Id_Gymnase = ?";
+        $stmt = self::$conn->prepare($sql);
         $gymid = $cGymnase->GetGymId();
-        return $this->ExecuteSelected("SELECT * FROM gymnase WHERE Id_Gymnase = $gymid");
+        $stmt->bind_param("i", $gymid);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result;
 
     }
 
-    public function InsertGym($cGymnase)
+    public static function DelOneGym_sport($cGymnase)
     {
-        $gymname = $cGymnase->getGymname();
-        $latitude=$cGymnase->getLatitude();
-        $longitude=$cGymnase->getLongitude();
-        $adresse=$cGymnase->getAdresse();
-        $ville=$cGymnase->getVille();
-        $zip=$cGymnase->getZip();
-            
-        return $this->ExecuteSelected("INSERT INTO gymnase (Nom, Coordonnees_latitude, Coordonnees_longitude, Adresse, Ville, Zip) VALUES ('$gymname','$latitude','$longitude','$adresse','$ville','$zip')");
+        $sql = "DELETE FROM gymnase_sport WHERE Id_Gymnase =?";
+        $stmt = self::$conn->prepare($sql);
+        $gymid = $cGymnase->GetGymId();
+        $stmt->bind_param("i", $gymid);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result;
+
+    }
+    public static function InsertGym_sport($cGymnase, )
+    {
+        $sql = "INSERT INTO gymnase_sport (Id_Gymnase, Id_Sport) VALUES ( ?, ?) ";
+        $stmt = self::$conn->prepare($sql);
+        $gymid = $cGymnase->GetGymId();
+        $sportId = $cGymnase->GetSportId();
+        $stmt->bind_param("ii", $gymid, $sportId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result;
 
     }
 
-    
-
-
-    public function UpdateParaGym($cGymnase)
+    public static function InsertGym($cGymnase)
     {
-        $gymid = $cGymnase->getGymId();
-        $gymname = $cGymnase->getGymname();
+        $sql = "INSERT INTO gymnase (Nom, Coordonnees_latitude, Coordonnees_longitude, Adresse, Ville, Zip) VALUES (?,?,?,?,?,?)";
+        $stmt = self::$conn->prepare($sql);
+
+        $nom = $cGymnase->getGymname();
         $latitude = $cGymnase->getLatitude();
         $longitude = $cGymnase->getLongitude();
         $adresse = $cGymnase->getAdresse();
         $ville = $cGymnase->getVille();
         $zip = $cGymnase->getZip();
-        return $this->ExecuteSelected("UPDATE gymnase SET Nom = '$gymname', Coordonnees_latitude = '$latitude' , Coordonnees_longitude = '$longitude', Adresse = '$adresse', Ville = '$ville', Zip = $zip WHERE Id_Gymnase = $gymid ");
 
+        $stmt->bind_param("siissi", $nom, $latitude, $longitude, $adresse, $ville, $zip);
+        $stmt->execute();
+        $stmt->store_result();
+        return $stmt;
     }
 
-    public function SelectOneGym_sport($cGymnase)
+    public static function UpdateParaGym($cGymnase)
     {
-        $gymid = $cGymnase->GetGymId();
-        return $this->ExecuteSelected("SELECT Id_Sport FROM gymnase_sport WHERE Id_Gymnase = $gymid ");
+        $sql = "UPDATE gymnase SET Nom = ?, Coordonnees_latitude = ?, Coordonnees_longitude = ?, Adresse = ?, Ville = ?, Zip = ? WHERE Id_Gymnase = ?";
+        $stmt = self::$conn->prepare($sql);
 
+        $nom = $cGymnase->getGymname();
+        $latitude = $cGymnase->getLatitude();
+        $longitude = $cGymnase->getLongitude();
+        $adresse = $cGymnase->getAdresse();
+        $ville = $cGymnase->getVille();
+        $zip = $cGymnase->getZip();
+        $gymId = $cGymnase->getGymId();
+
+        $stmt->bind_param("sssssii", $nom, $latitude, $longitude, $adresse, $ville, $zip, $gymId);
+        $stmt->execute();
+        $stmt->store_result();
+        return $stmt;
     }
 
-    public function DelOneGym_sport($cGymnase)
+    public static function DeleteGymnase($cGymnase)
     {
-        $gymid = $cGymnase->GetGymId();
-        return $this->ExecuteSelected("DELETE FROM gymnase_sport WHERE Id_Gymnase = $gymid ");
+        $sql = "DELETE FROM Gymnase WHERE Id_Gymnase = ?";
+        $stmt = self::$conn->prepare($sql);
 
-    }
-    public function InsertGym_sport($cGymnase,)
-    {
-        $gymId = $cGymnase->GetGymId();
-        $sportId = $cGymnase->GetSportId();
-        return $this->ExecuteSelected("INSERT INTO gymnase_sport (Id_Gymnase, Id_Sport) VALUES ( $gymId, $sportId) ");
+        $gymid = $cGymnase->getGymId();
 
-    }
-
-    public function SelectNamGym()
-    {
-        return $this->ExecuteSelected("SELECT Id_Gymnase, Nom FROM gymnase ");
-
+        $stmt->bind_param("i", $gymid);
+        $stmt->execute();
+        $stmt->store_result();
+        return $stmt;
     }
 
     
 
-    
+    #endregion
 
+    #region cSport
 
-
-    #regioncSport
-
-
-    public function SelectSport()
+    public static function SelectSport()
     {
-        return $this->ExecuteSelected("SELECT Id_Sport, Nom_du_sport FROM sport");
+        return self::ExecuteSelected("SELECT Id_Sport, Nom_du_sport FROM sport");
         ;
     }
 
 
 
-    public function SelectAllSport()
+    public static function SelectAllSport()
     {
-        return $this->ExecuteSelected("SELECT * FROM sport");
-
-    }
-    public function AddSport($cSport)
-    {
-        $name = $cSport->getName();
-        $collec = $cSport->getCollec();
-        return $this->ExecuteSelected("INSERT INTO sport (Nom_du_sport, Collectif) VALUES ('$name', $collec)");
-
-    }
-    public function SelectDdlSport($selectedGymId)
-    {
-        return $this->ExecuteSelected("SELECT DISTINCT s.id_sport, s.nom_du_sport FROM sport s JOIN gymnase_sport g ON s.id_sport = g.Id_Sport WHERE g.Id_Gymnase = $selectedGymId ");
+        return self::ExecuteSelected("SELECT * FROM sport");
 
     }
 
-    #regioncReservation
-
-
-    public function addReservation($cGymnase)
+    public static function AddSport($cSport)
     {
-        $gymId = $cGymnase->getGymId();
-        $userId = $cGymnase->getUserId();
-        $sportId = $cGymnase->getSportId();
-        $dateDebut = $cGymnase->getDateDebut();
-        $dateFin = $cGymnase->getDateFin();
-        $commentaire = $cGymnase->getCommentaire();
+        $sql = "INSERT INTO sport (Nom_du_sport, Collectif) VALUES (?, ?)";
+        $stmt = self::$conn->prepare($sql);
+
+        $nomSport = $cSport->getName();
+        $collectif = $cSport->getCollec();
+
+        $stmt->bind_param("si", $nomSport, $collectif);
+        $stmt->execute();
+        $stmt->store_result();
+        return $stmt;
+    }
+
+    public static function SelectDdlSport($selectedGymId)
+    {
+        $sql = "SELECT DISTINCT s.id_sport, s.nom_du_sport FROM sport s JOIN gymnase_sport g ON s.id_sport = g.Id_Sport WHERE g.Id_Gymnase = ?";
+        $stmt = self::$conn->prepare($sql);
+
+        $gymId = $selectedGymId;
+
+        $stmt->bind_param("i", $gymId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result;
+        }
+
+
+    #endregion
+
+    #region cReservation
+
+    public static function addReservation($cReservation)
+    {
+        $sql = "INSERT INTO reservation (Id_Gymnase, Id_Utilisateur, Id_Sport, Date_debut, Date_fin, Commentaire, statut) VALUES (?,?,?,?,?,?,?)";
+        $stmt = self::$conn->prepare($sql);
+
+        $gymId = $cReservation->getGymId();
+        $userId = $cReservation->getUserId();
+        $sportId = $cReservation->getSportId();
+        $dateDebut = $cReservation->getDateDebut();
+        $dateFin = $cReservation->getDateFin();
+        $commentaire = $cReservation->getCommentaire();
         $statut = 1;
-        return $this->ExecuteSelected("INSERT INTO reservation (Id_Gymnase, Id_Utilisateur, Id_Sport, Date_debut, Date_fin, Commentaire, statut) VALUES ($gymId, $userId, $sportId, '$dateDebut', '$dateFin', '$commentaire', $statut ");
 
+        $stmt->bind_param("iiisssi", $gymId, $userId, $sportId, $dateDebut, $dateFin, $commentaire, $statut);
+        $stmt->execute();
+        $stmt->store_result();
+        return $stmt;
     }
 
 
-    public function SelectUserReservations($cReservation)
+
+    public static function SelectUserReservations($cReservation)
     {
-        $userId=$cReservation->GetUserId();
-        return $this->ExecuteSelected("SELECT r.Id_reservation, r.Date_debut, r.Date_fin, s.Nom_du_sport, r.statut, g.nom FROM reservation r JOIN sport s ON s.Id_Sport = r.Id_Sport JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase WHERE Id_Utilisateur = $userId and r.statut > 0");
+        $sql = "SELECT r.Id_reservation, r.Date_debut, r.Date_fin, s.Nom_du_sport, r.statut, g.nom FROM reservation r JOIN sport s ON s.Id_Sport = r.Id_Sport JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase WHERE Id_Utilisateur = ? and r.statut > 0 ";
+        $stmt = self::$conn->prepare($sql);
+
+        $userId = $cReservation->getUserId();
+
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result;
+    }
+
+     public static function SelectUserValidation()
+    {
+        return self ::ExecuteSelected("SELECT r.Id_reservation, r.Date_debut, r.Date_fin, s.Nom_du_sport, r.statut, g.nom, u.Nom, u.Prenom FROM reservation r JOIN sport s ON s.Id_Sport = r.Id_Sport JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase JOIN utilisateur u ON u.Id_Utilisateur = r.Id_Utilisateur where r.statut > 0");
 
     }
 
-    public function SelectUserValidation()
+     public static function SelectUserHistorique($cReservation)
     {
-        return $this->ExecuteSelected("SELECT r.Id_reservation, r.Date_debut, r.Date_fin, s.Nom_du_sport, r.statut, g.nom, u.Nom, u.Prenom FROM reservation r JOIN sport s ON s.Id_Sport = r.Id_Sport JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase JOIN utilisateur u ON u.Id_Utilisateur = r.Id_Utilisateur where r.statut > 0");
+        $sql = "SELECT r.Id_reservation, r.Date_debut, r.Date_fin, s.Nom_du_sport, g.nom, r.Commentaire FROM reservation r JOIN sport s ON s.Id_Sport = r.Id_Sport JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase WHERE Id_Utilisateur = ? and statut = 0 or statut = 4";
+        $stmt = self::$conn->prepare($sql);
+        $userId = $cReservation->getUserId();
 
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result;
     }
 
-    public function SelectUserHistorique($cReservation)
+     public static function SelectReservationDetails($cReservation)
     {
-        $userId= $cReservation->GetUserId();
-        return $this->ExecuteSelected("SELECT r.Id_reservation, r.Date_debut, r.Date_fin, s.Nom_du_sport, g.nom, r.Commentaire FROM reservation r JOIN sport s ON s.Id_Sport = r.Id_Sport JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase WHERE Id_Utilisateur = $userId and statut = 0");
-
-    }
-
-    public function SelectReservationDetails($cReservation)
-    {
-        $reservationId=$cReservation->GetResaid();
-        return $this->ExecuteSelected("SELECT r.Date_debut, r.Date_fin, r.Commentaire, g.Id_Gymnase, s.Nom_du_sport, s.Id_Sport FROM reservation r JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase JOIN sport s ON s.Id_Sport = r.Id_Sport WHERE Id_reservation = $reservationId");
-
-    }
-
-    public function UpdateValidation($cReservation)
-    {
-        $valid = $cReservation->GetValid();
-        $reservationId = $cReservation->GetResaid();
-        return $this->ExecuteSelected("UPDATE reservation SET statut = $valid WHERE Id_reservation = $reservationId");
-
-    }
-
-    public function EndReservation($cReservation)
-    {
-        $reservationId = $cReservation->GetResaid();
-        return $this->ExecuteSelected("UPDATE reservation SET statut = 0 WHERE Id_reservation =  $reservationId");
-
-    }
-    public function UpdateReservation($cReservation)
-    {
+        $sql = "SELECT r.Date_debut, r.Date_fin, r.Commentaire, g.Id_Gymnase, s.Nom_du_sport, s.Id_Sport FROM reservation r JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase JOIN sport s ON s.Id_Sport = r.Id_Sport WHERE Id_reservation = ?";
+        $stmt = self::$conn->prepare($sql);
         $resaid = $cReservation->GetResaid();
+
+        $stmt->bind_param("i", $resaid);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result;
+    }
+
+     public static function UpdateValidation($cReservation)
+    {
+        $sql = "UPDATE reservation SET statut = ? WHERE Id_reservation = ?";
+        $stmt = self::$conn->prepare($sql);
+
+        $resaid = $cReservation->GetResaid();
+        $valid = $cReservation->GetValid();
+
+        $stmt->bind_param("ii", $valid, $resaid);
+        $stmt->execute();
+        $stmt->store_result();
+        return $stmt;
+    }
+    public static function EndReservation($cReservation)
+    {
+        $sql = "UPDATE reservation SET statut = 0 WHERE Id_reservation = ?";
+        $stmt = self::$conn->prepare($sql);
+
+        $resaId = $cReservation->GetResaid();
+
+        $stmt->bind_param("i", $resaId);
+        $stmt->execute();
+        $stmt->store_result();
+        return $stmt;
+    }
+
+    public static function UpdateReservation($cReservation)
+    {
+        $sql = "UPDATE reservation SET `Id_Gymnase`= ?, `Id_Sport`= ?, `Date_debut`= ?, `Date_fin` = ?, `Commentaire` = ?, `statut` = ? WHERE Id_reservation = ?";
+        $stmt = self::$conn->prepare($sql);
+
         $gymId = $cReservation->GetGymId();
         $sportId = $cReservation->GetSportId();
         $dateDebut = $cReservation->GetDateDebut();
         $dateFin = $cReservation->GetDateFin();
         $commentaire = $cReservation->GetCommentaire();
         $statut = 1;
-        return $this->ExecuteSelected("update reservation set `Id_Gymnase`= $gymId, `Id_Sport`= $sportId, `Date_debut`= '$dateDebut', `Date_fin` = '$dateFin', `Commentaire` = '$commentaire', `statut` = $statut where Id_reservation = $resaid ");
+        $resaId = $cReservation->GetResaid();
 
+        $stmt->bind_param("iisssii", $gymId, $sportId, $dateDebut, $dateFin, $commentaire, $statut, $resaId);
+        $stmt->execute();
+        $stmt->store_result();
+        return $stmt;
     }
 
-    public function DeleteReservation($cReservation)
+    public static function SelectValidReservation($cReservation)
     {
-        $resaid = $cReservation->GetResaid();
-        return $this->ExecuteSelected("delete from reservation where Id_reservation =  $resaid ");
+        $sql = "SELECT r.Id_reservation, r.Date_debut, r.Date_fin, r.statut, r.Commentaire, g.Nom, s.Nom_du_sport FROM reservation r JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase JOIN sport s ON s.Id_Sport = r.Id_Sport WHERE Id_reservation = ?";
+        $stmt = self::$conn->prepare($sql);
 
+        $resaId = $cReservation->GetResaid();
+
+        $stmt->bind_param("i", $resaId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result;
     }
 
-    public function SelectValidReservation($cReservation)
+    public static function CheckResa($cReservation)
     {
-        $resaid = $cReservation->GetResaid();
-        return $this->ExecuteSelected("SELECT r.Id_reservation, r.Date_debut, r.Date_fin, r.statut, r.Commentaire, g.Nom, s.Nom_du_sport FROM reservation r JOIN gymnase g ON g.Id_Gymnase = r.Id_Gymnase JOIN sport s ON s.Id_Sport = r.Id_Sport WHERE Id_reservation =  $resaid ");
 
+        $sql = "SELECT COUNT(*) as count FROM reservation WHERE Id_Gymnase = ? AND Id_Sport = ? AND statut IN (2, 3) AND Date_debut < ? AND Date_fin > ?";
+        $gymId = $cReservation->GetGymId();
+        $sportId = $cReservation->GetSportId();
+        $dateDebut = substr($cReservation->GetDateDebut(), 0, 10); 
+        $dateFin = substr($cReservation->GetDateFin(), 0, 10);     
+        $stmt = self::$conn->prepare($sql);
+
+        $stmt->bind_param("iiss", $gymId, $sportId, $dateFin, $dateDebut);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $dt = $result->fetch_assoc();
+        return $dt;
     }
-
-
     
 
-
-
 }
-
-
-
-
- 
-
 ?>

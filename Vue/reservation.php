@@ -3,15 +3,23 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gestion des Projets</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <?php require_once 'menu.php'; ?>
+   
 
     <div class="container">
         <h1>Mes Réservations</h1>
-
+         
+        <?php if (!empty($error)): ?>
+                    <p style="color:red;">
+                        <?php echo htmlspecialchars($error); ?>
+                    </p>
+                <?php endif; ?>
         <table>
             <tr>
                 <th>Statut</th>
@@ -47,14 +55,14 @@
         <?php if ($editGymData): ?>
          <div id="paraModal" class="modal" style="display: block;">
         <div class="modal-content">
-        <form method="POST" action="../Controleur/validation.php" style="float:right;">
+        <form method="POST" action="../Controleur/reservation.php" style="float:right;">
       <input type="hidden" name="action" value="closepopup">
       <button type="submit" class="close2">&times;</button>
     </form>
             <h2>Modifier la Réservation</h2>
             <form method="POST" action="reservation.php">
                 <input type="hidden" name="action" value="saveedit">
-                <input type="hidden" name="Id_reservation" value="<?php echo htmlspecialchars($resaid); ?>">
+                <input type="hidden" name="Id_reservation" value="<?php echo htmlspecialchars($_POST['Id_reservation'] ?? $editGymData['Id_reservation'] ?? ''); ?>">
 
                 <!-- GYM -->
                 <label for="gymSelect">Gymnase :</label>
@@ -112,12 +120,14 @@
                 >
                 <br><br>
 
-                <input type="submit" name="saveedit" value="Confirmer la réservation">
+                <input type="submit" name="saveedit" value="Confirmer la modification">
             </form>
             </div>
       </div>
     </div>
         <?php endif; ?>
-    </div>
+    
+      <?php require_once '../Vue/footer.php'; ?>
+
 </body>
 </html>

@@ -1,4 +1,5 @@
 <?php
-
-header("Location: Vue/login.html");
+require_once './Model/cbdd.php';
+cbdd::init();
+header("Location: Vue/login.php");
 ?>
