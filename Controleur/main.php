@@ -51,8 +51,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
             }
-            header("Location: ../Vue/main.php");
-            exit();
         } elseif ($action == 'parametre') {
             $cGymnase->setGymId(isset($_POST['paragymid']) ? (int) $_POST['paragymid'] : null);
             $cGymnase->setGymname(isset($_POST['paranom']) ? $_POST['paranom'] : null);
